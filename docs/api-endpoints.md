@@ -2,6 +2,9 @@
 
 **Base URL**: `http://localhost:3000/api`
 
+> 💡 **Documentação Interativa**: Com o servidor rodando, acesse a UI do Swagger em [`http://localhost:3000/docs`](http://localhost:3000/docs).  
+> Para detalhes de configuração, veja [docs/openapi.md](openapi.md).
+
 ---
 
 ## 📂 Categories
@@ -495,6 +498,8 @@ Formato padrão de erros:
   ]
 }
 ```
+
+> ⚠️ **Tratamento de Erros**: Para o contrato completo de erros, hierarquia de exceções e como o handler global funciona, veja [docs/error-handling.md](error-handling.md).
 
 ### Status Codes
 

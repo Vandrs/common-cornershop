@@ -126,6 +126,16 @@ flowchart TD
 - Composição de comportamentos
 - Testabilidade unitária
 
+✅ **OpenAPI / Swagger**
+- Documentação de endpoints gerada automaticamente via `@fastify/swagger`
+- Schemas Zod convertidos para JSON Schema via `zod-to-json-schema`
+- UI interativa disponível em `/docs`
+
+✅ **Global Error Handler**
+- Handler centralizado via `setErrorHandler` do Fastify
+- Erros de domínio mapeados para HTTP via `errorMap` explícito
+- Detalhes em [docs/error-handling.md](error-handling.md)
+
 ---
 
 ## Benefícios da Arquitetura
@@ -200,6 +210,8 @@ graph TB
     style REPO fill:#96ceb4
     style DB fill:#ffeaa7
 ```
+
+> Nota: o Swagger Plugin (responsável por expor a UI em `/docs` e os specs JSON/YAML) faz parte da "Presentation Layer" e consome os Zod schemas para gerar a documentação interativa.
 
 ---
 

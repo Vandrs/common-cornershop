@@ -144,6 +144,8 @@ A API estará disponível em: **http://localhost:3000**
 | [📁 Estrutura do Projeto](docs/project-structure.md) | Organização detalhada do monorepo |
 | [🔄 Exemplos](docs/examples.md) | Fluxos completos com código e diagramas |
 | [🧪 Testes](docs/testing.md) | Jest, testes unitários, integração e E2E |
+| [📐 OpenAPI / Swagger](docs/openapi.md) | Configuração do Swagger, integração com Zod, boas práticas |
+| [⚠️ Error Handling](docs/error-handling.md) | Contrato de erros, envelope, mapeamento de exceções |
 
 ### 🔗 Links Rápidos
 
@@ -288,7 +290,8 @@ yarn test:e2e
 - [ ] **Alertas de Estoque** - Notificação quando estoque < mínimo
 - [ ] **Gestão de Clientes** - CRUD de clientes
 - [ ] **Pagamentos** - Integração com gateways
-- [ ] **API Documentation** - Swagger/OpenAPI
+ - [x] **API Documentation** - Swagger/OpenAPI ([📐 OpenAPI / Swagger](docs/openapi.md))
+
 - [ ] **Rate Limiting** - Proteção contra abuso
 - [ ] **Caching** - Redis para listagens
 - [ ] **CI/CD** - GitHub Actions
