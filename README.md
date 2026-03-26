@@ -144,7 +144,7 @@ A API estará disponível em: **http://localhost:3000**
 | [📁 Estrutura do Projeto](docs/project-structure.md) | Organização detalhada do monorepo |
 | [🔄 Exemplos](docs/examples.md) | Fluxos completos com código e diagramas |
 | [🧪 Testes](docs/testing.md) | Jest, testes unitários, integração e E2E |
-| [🗺️ Roadmap](roadmap.md) | Plano de implementação, tasks, dependências e paralelismo |
+| [🗺️ Roadmap](docs/roadmap.md) | Plano de implementação, tasks, dependências e paralelismo |
 
 ### 🔗 Links Rápidos
 
@@ -152,7 +152,7 @@ A API estará disponível em: **http://localhost:3000**
 - **Entidades**: Category, Product, Stock, Order → [domain-model.md](docs/domain-model.md)
 - **Endpoints**: GET/POST para pedidos e produtos → [api-endpoints.md](docs/api-endpoints.md)
 - **Convenções**: Como nomear variáveis e commits → [conventions.md](docs/conventions.md)
-- **Roadmap**: Tasks, dependências e paralelismo da implementação → [roadmap.md](roadmap.md)
+- **Roadmap**: Tasks, dependências e paralelismo da implementação → [roadmap.md](docs/roadmap.md)
 
 ---
 
