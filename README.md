@@ -9,7 +9,7 @@
 
 **Sistema de gestão completo para lojinha de esquina**
 
-[Quick Start](#-quick-start) • [Documentação](#-documentação)
+[Quick Start](#-quick-start) • [Contribuindo](#-contribuindo)
 
 </div>
 
@@ -63,7 +63,11 @@ A API estará disponível em: **http://localhost:3000**
 
 ---
 
-## 📚 Documentação
+## 🤝 Contribuindo
+
+Leia [docs/conventions.md](docs/conventions.md) antes de abrir um PR.
+
+### 📚 Documentação
 
 | Documento | O que você encontra |
 |---|---|
@@ -80,12 +84,6 @@ A API estará disponível em: **http://localhost:3000**
 | [roadmap.md](docs/roadmap.md) | Fases do MVP, breakdown de tasks, dependências e critérios de conclusão. |
 | [adr/0001-idioma-mensagens-de-erro.md](docs/adr/0001-idioma-mensagens-de-erro.md) | Decisão: código em inglês, campo `message` das respostas em pt-BR. |
 | [adr/0002-error-handler-centralizado.md](docs/adr/0002-error-handler-centralizado.md) | Decisão: único `setErrorHandler` global no bootstrap da aplicação. |
-
----
-
-## 🤝 Contribuindo
-
-Leia [docs/conventions.md](docs/conventions.md) antes de abrir um PR.
 
 ---
 
