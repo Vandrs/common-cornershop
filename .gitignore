@@ -19,6 +19,7 @@ coverage/
 # NX cache
 .nx/cache
 .nx/workspace-data
+output.json
 
 # TypeScript
 *.tsbuildinfo
