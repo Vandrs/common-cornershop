@@ -130,98 +130,6 @@ A API estará disponível em: **http://localhost:3000**
 
 ---
 
-## 📚 Documentação
-
-### 📖 Documentação Completa
-
-| Documento | Descrição |
-|-----------|-----------|
-| [🏗️ Arquitetura](docs/architecture.md) | Visão de camadas, fluxo de dependências, princípios DDD |
-| [📊 Modelo de Domínio](docs/domain-model.md) | Entidades, relacionamentos, regras de negócio |
-| [🔌 API Endpoints](docs/api-endpoints.md) | Documentação completa de todos os endpoints |
-| [🎨 Convenções](docs/conventions.md) | Nomenclatura, commits, padrões de código |
-| [🗄️ Database](docs/database.md) | Migrations, seeds, estratégias de versionamento |
-| [📁 Estrutura do Projeto](docs/project-structure.md) | Organização detalhada do monorepo |
-| [🔄 Exemplos](docs/examples.md) | Fluxos completos com código e diagramas |
-| [🧪 Testes](docs/testing.md) | Jest, testes unitários, integração e E2E |
-| [🗺️ Roadmap](docs/roadmap.md) | Plano de implementação, tasks, dependências e paralelismo |
-| [📐 OpenAPI / Swagger](docs/openapi.md) | Configuração do Swagger, integração com Zod, boas práticas |
-| [⚠️ Error Handling](docs/error-handling.md) | Contrato de erros, envelope, mapeamento de exceções |
-
-### 🔗 Links Rápidos
-
-- **Arquitetura**: Como as camadas se comunicam → [architecture.md](docs/architecture.md)
-- **Entidades**: Category, Product, Stock, Order → [domain-model.md](docs/domain-model.md)
-- **Endpoints**: GET/POST para pedidos e produtos → [api-endpoints.md](docs/api-endpoints.md)
-- **Convenções**: Como nomear variáveis e commits → [conventions.md](docs/conventions.md)
-- **Roadmap**: Tasks, dependências e paralelismo da implementação → [roadmap.md](docs/roadmap.md)
-
----
-
-## 📝 Scripts Principais
-
-```bash
-# Desenvolvimento
-yarn start:dev              # Inicia em modo watch
-yarn lint                   # Executa linter
-yarn format                 # Formata código
-
-# Testes
-yarn test                   # Todos os testes
-yarn test:unit              # Testes unitários
-yarn test:integration       # Testes de integração
-yarn test:e2e               # Testes E2E
-yarn test:watch             # Watch mode
-yarn test:coverage          # Com cobertura
-
-# Build
-yarn build                  # Compila o projeto
-yarn build:api              # Compila apenas a API
-
-# Migrations
-yarn migration:generate     # Gera nova migration
-yarn migration:run          # Executa migrations
-yarn migration:revert       # Reverte última migration
-
-# Seeds
-yarn seed                   # Executa todos os seeds
-
-# NX
-yarn nx graph               # Visualiza grafo de dependências
-yarn nx affected:test       # Testa apenas projetos afetados
-```
-
----
-
-## 🎯 Principais Endpoints
-
-### Categorias
-
-```http
-GET    /api/categories           # Listar categorias
-GET    /api/categories/:id       # Obter categoria
-```
-
-### Produtos
-
-```http
-GET    /api/products             # Listar produtos (com filtros)
-GET    /api/products/:id         # Obter produto (com estoque)
-```
-
-### Pedidos
-
-```http
-POST   /api/orders               # Criar pedido
-GET    /api/orders               # Listar pedidos (com filtros)
-GET    /api/orders/:id           # Obter pedido completo
-GET    /api/orders/:id/status    # Obter apenas status
-```
-
-> 📖 **Veja exemplos completos em:** [docs/api-endpoints.md](docs/api-endpoints.md)
-
----
-
 ## 🏗️ Arquitetura em Camadas
 
 ```mermaid
@@ -242,43 +150,46 @@ flowchart TD
 
 ---
 
-## 📊 Modelo de Dados
+## 📚 Documentação
 
-O sistema gerencia 5 entidades principais:
+### [`docs/project-structure.md`](docs/project-structure.md)
+Full annotated directory tree of the monorepo. Read this first when navigating the codebase — it maps every directory and file suffix to its role (`*.entity.ts`, `*.usecase.ts`, `*.repository.impl.ts`, etc.) and explains what belongs in each layer.
 
-1. **Category** - Organização de produtos
-2. **Product** - Produtos vendidos
-3. **Stock** - Controle de estoque
-4. **Order** - Pedidos realizados
-5. **OrderItem** - Items dentro de pedidos
+### [`docs/architecture.md`](docs/architecture.md)
+Layer responsibilities, dependency flow diagram (Controllers → UseCases → Services → Repositories), DI patterns with TSyringe, and the rules that define what code is allowed in each layer. Consult before creating any new class or module.
 
-```mermaid
-erDiagram
-    CATEGORY ||--o{ PRODUCT : contains
-    PRODUCT ||--|| STOCK : has
-    PRODUCT ||--o{ ORDER_ITEM : "appears in"
-    ORDER ||--o{ ORDER_ITEM : contains
-```
+### [`docs/conventions.md`](docs/conventions.md)
+All code style rules in one place: naming conventions (camelCase / PascalCase / UPPER_SNAKE_CASE / snake_case), file naming pattern (`{name}.{type}.ts`), import ordering (3-group: external → `@domain/` `@shared/` → relative), JSDoc requirements, and git conventions (Conventional Commits + branch naming).
 
-> 📖 **Veja modelo completo em:** [docs/domain-model.md](docs/domain-model.md)
+### [`docs/domain-model.md`](docs/domain-model.md)
+ER diagram and description of all domain entities: `Category`, `Product`, `Stock`, `Order`, `OrderItem`. Shows relationships, fields, and the `BaseEntity` (id, createdAt, updatedAt, deletedAt). Reference when adding or modifying entities.
 
----
+### [`docs/error-handling.md`](docs/error-handling.md)
+The full error contract: the JSON envelope format (`error` in English, `message` in pt-BR, no status in body), the `DomainError` hierarchy, how the centralized `setErrorHandler` classifies exceptions (domain / Zod validation / unexpected), the `errorMap`, and the step-by-step for adding a new domain error. Also cross-references ADR-0001 and ADR-0002.
 
-## 🧪 Testes
+### [`docs/testing.md`](docs/testing.md)
+Jest setup for the NX workspace, all test script flags, the AAA (Arrange-Act-Assert) pattern, `describe → describe → it` structure, mocking patterns (including TSyringe container mocks), coverage thresholds (global 80% lines/functions; `*.service.ts` 90%), fixtures/factories conventions, and full example specs for unit, integration (Fastify inject), and E2E tests.
 
-```bash
-# Testes unitários
-yarn test
+### [`docs/api-endpoints.md`](docs/api-endpoints.md)
+Complete REST API reference: every endpoint for Categories, Products, Stock, and Orders — with request/response shapes, query parameters, status codes, and error payloads. Use as the canonical contract when implementing controllers and schemas.
 
-# Testes com watch
-yarn test:watch
+### [`docs/database.md`](docs/database.md)
+TypeORM CLI usage, migration workflow, seed scripts, test database setup (port 5433), entity configuration, and soft-delete conventions. Read before writing migrations or repository implementations.
 
-# Testes com cobertura
-yarn test:cov
+### [`docs/openapi.md`](docs/openapi.md)
+How to integrate `@fastify/swagger` + `@fastify/swagger-ui` with existing Zod schemas using `zod-to-json-schema`. Covers plugin registration, route metadata conventions (`tags`, `summary`, `operationId`), and how to keep the Swagger UI at `/docs` in sync with the API.
 
-# Testes e2e
-yarn test:e2e
-```
+### [`docs/examples.md`](docs/examples.md)
+End-to-end walkthroughs of complete request flows (e.g. creating an order) showing how each layer — controller, use case, service, repository — interacts. Useful for understanding the full call chain before implementing a new feature.
+
+### [`docs/roadmap.md`](docs/roadmap.md)
+Implementation roadmap for the MVP: phases, task breakdown, dependencies between tasks, and done criteria. Consult to understand what has been prioritized and in what order work should proceed.
+
+### [`docs/adr/0001-idioma-mensagens-de-erro.md`](docs/adr/0001-idioma-mensagens-de-erro.md)
+Decision record: all code in English; user-facing `message` fields in pt-BR. Defines where to centralize error message strings (`libs/shared/src/errors/messages/`) and the future i18n migration path.
+
+### [`docs/adr/0002-error-handler-centralizado.md`](docs/adr/0002-error-handler-centralizado.md)
+Decision record: single global `fastify.setErrorHandler` registered at bootstrap (`apps/api/src/plugins/error-handler.plugin.ts`). Prohibits scattered per-route error handling and defines the three classification categories the handler must cover.
 
 ---
 
@@ -292,8 +203,7 @@ yarn test:e2e
 - [ ] **Alertas de Estoque** - Notificação quando estoque < mínimo
 - [ ] **Gestão de Clientes** - CRUD de clientes
 - [ ] **Pagamentos** - Integração com gateways
- - [x] **API Documentation** - Swagger/OpenAPI ([📐 OpenAPI / Swagger](docs/openapi.md))
-
+- [x] **API Documentation** - Swagger/OpenAPI ([📐 OpenAPI / Swagger](docs/openapi.md))
 - [ ] **Rate Limiting** - Proteção contra abuso
 - [ ] **Caching** - Redis para listagens
 - [ ] **CI/CD** - GitHub Actions
