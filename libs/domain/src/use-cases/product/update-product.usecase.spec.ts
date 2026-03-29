@@ -140,5 +140,24 @@ describe('UpdateProductUseCase', () => {
       );
       expect(mockProductRepository.save).not.toHaveBeenCalled();
     });
+
+    it('should update the description when only description is provided', async () => {
+      // Arrange
+      const existing = buildProduct({ description: 'Old description' });
+      const dto: UpdateProductDTO = { description: 'New description' };
+      const saved = buildProduct({ description: 'New description' });
+
+      mockProductService.getExistingProduct.mockResolvedValue(existing);
+      mockProductRepository.save.mockResolvedValue(saved);
+
+      // Act
+      const result = await useCase.execute('prod-1', dto);
+
+      // Assert
+      expect(mockProductRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ description: 'New description' }),
+      );
+      expect(result.description).toBe('New description');
+    });
   });
 });
