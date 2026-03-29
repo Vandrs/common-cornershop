@@ -14,7 +14,7 @@ flowchart TD
     B -->|Orchestration| C[Services]
     C -->|Business Logic| D[Repositories]
     D -->|Data Access| E[(PostgreSQL)]
-    
+
     style A fill:#ff6b6b
     style B fill:#4ecdc4
     style C fill:#45b7d1
@@ -70,24 +70,28 @@ flowchart TD
 ### 2. Separação de Responsabilidades
 
 #### Controllers (Apresentação)
+
 - Recebem requests HTTP
 - Validam input usando Zod schemas
 - Delegam para UseCases
 - Formatam responses HTTP
 
 #### UseCases (Orquestração)
+
 - Ponto de entrada da lógica de negócio
 - Orquestram chamadas a múltiplos Services
 - Coordenam transações
 - Implementam casos de uso específicos
 
 #### Services (Lógica de Negócio)
+
 - Unidades reutilizáveis de lógica de negócio
 - Podem ser compostos por UseCases
 - Focados em uma única responsabilidade
 - Independentes de framework
 
 #### Repositories (Acesso a Dados)
+
 - Abstração sobre persistência
 - Implementam interfaces definidas no domínio
 - Encapsulam queries e operações de banco
@@ -97,41 +101,49 @@ flowchart TD
 ## Padrões Arquiteturais Aplicados
 
 ✅ **Domain-Driven Design (DDD)**
+
 - Entidades ricas com comportamento
 - Bounded contexts bem definidos
 - Ubiquitous language no código
 
 ✅ **Clean Architecture (Hexagonal Architecture)**
+
 - Domínio independente de frameworks
 - Inversão de dependências
 - Testabilidade facilitada
 
 ✅ **Dependency Inversion Principle**
+
 - Interfaces definem contratos
 - Implementações são injetadas
 - Baixo acoplamento
 
 ✅ **Repository Pattern**
+
 - Abstração de acesso a dados
 - Facilita troca de persistência
 - Queries centralizadas
 
 ✅ **Use Case Pattern**
+
 - Cada operação de negócio é um UseCase
 - Orquestração explícita
 - Reutilização de Services
 
 ✅ **Service Layer Pattern**
+
 - Lógica de negócio reutilizável
 - Composição de comportamentos
 - Testabilidade unitária
 
 ✅ **OpenAPI / Swagger**
+
 - Documentação de endpoints gerada automaticamente via `@fastify/swagger`
 - Schemas Zod convertidos para JSON Schema via `zod-to-json-schema`
 - UI interativa disponível em `/docs`
 
 ✅ **Global Error Handler**
+
 - Handler centralizado via `setErrorHandler` do Fastify
 - Erros de domínio mapeados para HTTP via `errorMap` explícito
 - Detalhes em [docs/error-handling.md](error-handling.md)
@@ -141,26 +153,31 @@ flowchart TD
 ## Benefícios da Arquitetura
 
 ### 🎯 Manutenibilidade
+
 - Separação clara de responsabilidades
 - Fácil localização de código
 - Mudanças isoladas
 
 ### 🔄 Testabilidade
+
 - Domínio testável sem infraestrutura
 - Mocks simples via interfaces
 - Testes unitários rápidos
 
 ### 📈 Escalabilidade
+
 - Fácil adicionar novos casos de uso
 - Evolução independente de camadas
 - Preparado para crescimento
 
 ### 🔌 Extensibilidade
+
 - Novos repositórios sem mudar domínio
 - Troca de frameworks facilitada
 - Integrações isoladas
 
 ### 👥 Colaboração
+
 - Estrutura previsível
 - Convenções claras
 - Onboarding facilitado
@@ -176,25 +193,25 @@ graph TB
         S[Schemas Zod]
         M[Middlewares]
     end
-    
+
     subgraph "Application Layer"
         UC[UseCases]
         SRV[Services]
     end
-    
+
     subgraph "Domain Layer"
         E[Entities]
         RI[Repository Interfaces]
         D[DTOs]
         EN[Enums]
     end
-    
+
     subgraph "Infrastructure Layer"
         REPO[Repository Impl]
         DB[(Database)]
         MIG[Migrations]
     end
-    
+
     C -->|validates| S
     C -->|calls| UC
     UC -->|orchestrates| SRV
@@ -203,7 +220,7 @@ graph TB
     REPO -->|implements| RI
     REPO -->|accesses| DB
     MIG -->|creates| DB
-    
+
     style C fill:#ff6b6b
     style UC fill:#4ecdc4
     style SRV fill:#45b7d1
@@ -226,7 +243,7 @@ sequenceDiagram
     participant Service
     participant Repository
     participant Database
-    
+
     Client->>Controller: HTTP Request
     Controller->>Schema: Validate Input
     Schema-->>Controller: Validated Data
@@ -255,16 +272,16 @@ O projeto utiliza **TSyringe** para injeção de dependências, garantindo:
 ### Configuração
 
 ```typescript
-// apps/api/src/container/dependency-injection.ts
-container.register<IProductRepository>(
-  'IProductRepository',
-  { useClass: ProductRepositoryImpl }
-);
+// apps/api/src/container/dependency-injection.ts (entregue em T4.1)
+import { container } from 'tsyringe';
 
-container.register<IListProductsUseCase>(
-  'ListProductsUseCase',
-  { useClass: ListProductsUseCase }
-);
+// Exemplo de bindings adicionados pelo bootstrap
+container.register('IProductRepository', { useClass: ProductRepositoryImpl });
+container.register('ICategoryRepository', { useClass: CategoryRepositoryImpl });
+container.register('IStockRepository', { useClass: StockRepositoryImpl });
+
+// UseCases e Services também são registrados no container quando necessário
+container.register('ListProductsUseCase', { useClass: ListProductsUseCase });
 ```
 
 ### Uso
@@ -273,8 +290,8 @@ container.register<IListProductsUseCase>(
 // Injeção no construtor
 export class ProductController {
   constructor(
-    @inject('ListProductsUseCase') 
-    private listProductsUseCase: IListProductsUseCase
+    @inject('ListProductsUseCase')
+    private listProductsUseCase: IListProductsUseCase,
   ) {}
 }
 ```
@@ -305,14 +322,42 @@ export class ProductController {
 
 ---
 
+## Fastify Bootstrap e Error Handler (T4.1)
+
+Observação: o bootstrap da API Fastify e o plugin de tratamento de erros foram entregues como parte da task T4.1. Arquivos adicionados em `apps/api/src/` incluem:
+
+```
+apps/api/src/
+├── main.ts                 # inicia o servidor (env, logging)
+├── app.ts                  # createApp / registra plugins e rotas
+├── container/              # TSyringe DI bindings (dependency-injection.ts)
+└── plugins/
+    └── error-handler.plugin.ts  # implementa setErrorHandler conforme docs/error-handling.md
+```
+
+O plugin `error-handler.plugin.ts` aplica o contrato descrito em docs/error-handling.md: mapeamento de DomainError → HTTP, tratamento de ZodError e fallback 500 para erros inesperados. Controllers ainda serão implementados nas próximas tasks (T4.4+), por isso o app exporta uma função `createApp()` útil para testes E2E.
+
+### Observações de implementação (entregue em T4.1)
+
+- O bootstrap foi entregue como parte da task T4.1 e adiciona os pontos de extensão necessários para registrar rotas, middlewares e plugins. Arquivos-chave:
+
+- `apps/api/src/main.ts` — entrypoint que carrega variáveis de ambiente e inicia o servidor em modo dev/production.
+- `apps/api/src/app.ts` — função `createApp()` que instancia Fastify, registra plugins (CORS, Swagger, Error Handler) e retorna a instância (útil para testes e E2E).
+- `apps/api/src/container/dependency-injection.ts` — bindings TSyringe (registros de repositórios stubs e use cases) conforme convenção de tokens do projeto.
+- `apps/api/src/plugins/error-handler.plugin.ts` — plugin Fastify que aplica `setErrorHandler` e implementa mapeamento de erros de domínio, Zod e fallback.
+
+## Essas entregas deixam a aplicação em estado testável (createApp + Fastify inject) mesmo antes das controllers T4.4+ serem implementadas.
+
 ## Evolução da Arquitetura
 
 ### Atual: Modular Monolith
+
 - Todos os módulos em um único processo
 - Separação lógica por camadas
 - Deploy único e simples
 
 ### Futuro: Microserviços (se necessário)
+
 - Cada módulo pode virar um serviço independente
 - Comunicação via eventos/APIs
 - Escalabilidade horizontal

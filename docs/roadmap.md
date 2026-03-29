@@ -31,7 +31,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase                      | Período sugerido | Status       |
 | ------------------------- | ---------------- | ------------ |
 | Fase 1 — Fundação         | Semana 1         | ✅ Concluída |
-| Fase 2 — Core Domain & DB | Semana 1–2       | Em andamento |
+| Fase 2 — Core Domain & DB | Semana 1–2       | ✅ Concluída |
 | Fase 3 — API Layer        | Semana 2–3       | Não iniciado |
 | Fase 4 — Quality          | Semana 3–4       | Não iniciado |
 | Fase 5 — DevOps Final     | Semana 4         | Não iniciado |
@@ -231,17 +231,17 @@ gantt
 
 - Objetivo: modelar domínio, contratos de repositório e configurar DB com migrations+seeds.
 
-| ID   | Issue |                                                        Título | Estimativa | Prioridade | Status          | Link                                                         |
-| ---- | ----- | ------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T2.1 | #4    |              Domain — Entities, BaseEntity e OrderStatus Enum |         4h | Alta       | ✅ Concluído    | [#4](https://github.com/Vandrs/common-cornershop/issues/4)   |
-| T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ✅ Concluído    | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
-| T2.3 | #6    |                        Domain — Category: UseCases e Services |         3h | Média      | ✅ Concluída    | [#6](https://github.com/Vandrs/common-cornershop/issues/6)   |
-| T2.4 | #7    |                 Domain — Product + Stock: UseCases e Services |         4h | Média      | ✅ Concluída    | [#7](https://github.com/Vandrs/common-cornershop/issues/7)   |
-| T2.5 | #8    |               Domain — Order + OrderItem: UseCases e Services |         5h | Média      | ✅ Concluída    | [#8](https://github.com/Vandrs/common-cornershop/issues/8)   |
-| T3.1 | #9    | Infra DB — TypeORM DataSource, Config e variáveis de ambiente |         2h | Alta       | ✅ Concluída    | [#9](https://github.com/Vandrs/common-cornershop/issues/9)   |
-| T3.2 | #10   |                             Infra DB — Migrations (5 tabelas) |         4h | Alta       | ✅ Concluída    | [#10](https://github.com/Vandrs/common-cornershop/issues/10) |
-| T3.3 | #11   |               Infra DB — Seeds (Categories, Products e Stock) |         2h | Média      | ⬜ Não iniciado | [#11](https://github.com/Vandrs/common-cornershop/issues/11) |
-| T6.1 | #23   |           DevOps — Docker e docker-compose (app + PostgreSQL) |         2h | Média      | ✅ Concluído    | [#23](https://github.com/Vandrs/common-cornershop/issues/23) |
+| ID   | Issue |                                                        Título | Estimativa | Prioridade | Status       | Link                                                         |
+| ---- | ----- | ------------------------------------------------------------: | ---------: | ---------- | ------------ | ------------------------------------------------------------ |
+| T2.1 | #4    |              Domain — Entities, BaseEntity e OrderStatus Enum |         4h | Alta       | ✅ Concluído | [#4](https://github.com/Vandrs/common-cornershop/issues/4)   |
+| T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ✅ Concluído | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
+| T2.3 | #6    |                        Domain — Category: UseCases e Services |         3h | Média      | ✅ Concluída | [#6](https://github.com/Vandrs/common-cornershop/issues/6)   |
+| T2.4 | #7    |                 Domain — Product + Stock: UseCases e Services |         4h | Média      | ✅ Concluída | [#7](https://github.com/Vandrs/common-cornershop/issues/7)   |
+| T2.5 | #8    |               Domain — Order + OrderItem: UseCases e Services |         5h | Média      | ✅ Concluída | [#8](https://github.com/Vandrs/common-cornershop/issues/8)   |
+| T3.1 | #9    | Infra DB — TypeORM DataSource, Config e variáveis de ambiente |         2h | Alta       | ✅ Concluída | [#9](https://github.com/Vandrs/common-cornershop/issues/9)   |
+| T3.2 | #10   |                             Infra DB — Migrations (5 tabelas) |         4h | Alta       | ✅ Concluída | [#10](https://github.com/Vandrs/common-cornershop/issues/10) |
+| T3.3 | #11   |               Infra DB — Seeds (Categories, Products e Stock) |         2h | Média      | ✅ Concluído | [#11](https://github.com/Vandrs/common-cornershop/issues/11) |
+| T6.1 | #23   |           DevOps — Docker e docker-compose (app + PostgreSQL) |         2h | Média      | ✅ Concluído | [#23](https://github.com/Vandrs/common-cornershop/issues/23) |
 
 - Nota: T2.3 implementado na branch `feat/T2.3-category-usecases`.
 
@@ -251,8 +251,18 @@ gantt
 
 - T2.3 e T2.4: entregues nas branches de feature correspondentes (ver histórico das branches das tasks T2.3 e T2.4 nos PRs).
 - T3.1: entregue nesta branch: `feat/T3.1-typeorm-datasource`.
+- T3.3: Seeds idempotentes implementadas em `apps/api/src/database/seeds/` com entrypoint `run-seeds.ts` e script `yarn seed` (ver detalhe em docs/database.md). ✅ Concluído.
+- T4.1: Fastify bootstrap e container DI entregues na branch `feat/T4.1-fastify-bootstrap` — inclui `main.ts`, `app.ts`, `apps/api/src/container/dependency-injection.ts`, `apps/api/src/plugins/error-handler.plugin.ts`, e stubs de `repositories/*.impl.ts`. ✅ Concluído.
 - T2.5: entregue na branch `feat/T2.5-order-usecases` — OrderService, InvalidOrderStatusTransitionError e 5 UseCases (Create, Get, List, UpdateStatus, Cancel) com 37 novos testes unitários.
 - T3.2: entregue na branch `feat/T3.2-database-migrations` — 5 migrations TypeORM (categories → products → stocks → orders → order_items) com FKs, índices e check constraints.
+- T5.1 / T5.2: Unit tests para Services e UseCases implementados e com cobertura alinhada às metas (ver docs/testing.md). ✅ Concluído.
+
+Nota de status geral:
+
+- Fase 2 (Core Domain & DB) está agora marcada como CONCLUÍDA — inclui migrations (T3.2) e seeds idempotentes (T3.3).
+- Fase 3 (API Layer) está EM ANDAMENTO: o bootstrap Fastify + DI + error handler foi entregue (T4.1) e repositórios parciais (stubs) estão no repositório; controllers e rotas seguem em T4.4+.
+
+Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
 ### Fase 3 — API Layer
 
@@ -260,9 +270,9 @@ gantt
 
 | ID   | Issue |                                                          Título | Estimativa | Prioridade | Status          | Link                                                         |
 | ---- | ----- | --------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ⬜ Não iniciado | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
-| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | ⬜ Não iniciado | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
-| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | ⬜ Não iniciado | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
+| T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ✅ Concluído    | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
+| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | Em andamento    | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
+| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | Em andamento    | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
 | T4.4 | #15   |                         Infra API — Category Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#15](https://github.com/Vandrs/common-cornershop/issues/15) |
 | T4.5 | #16   |                          Infra API — Product Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#16](https://github.com/Vandrs/common-cornershop/issues/16) |
 | T4.6 | #17   |                            Infra API — Order Controller e Rotas |         3h | Média      | ⬜ Não iniciado | [#17](https://github.com/Vandrs/common-cornershop/issues/17) |
@@ -275,8 +285,8 @@ gantt
 
 | ID   | Issue |                                                     Título | Estimativa | Prioridade | Status          | Link                                                         |
 | ---- | ----- | ---------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T5.1 | #18   |                       Testes — Unit Tests: Domain Services |         4h | Média      | ⬜ Não iniciado | [#18](https://github.com/Vandrs/common-cornershop/issues/18) |
-| T5.2 | #19   |                    Testes — Unit Tests: UseCases com mocks |         4h | Média      | ⬜ Não iniciado | [#19](https://github.com/Vandrs/common-cornershop/issues/19) |
+| T5.1 | #18   |                       Testes — Unit Tests: Domain Services |         4h | Média      | ✅ Concluído    | [#18](https://github.com/Vandrs/common-cornershop/issues/18) |
+| T5.2 | #19   |                    Testes — Unit Tests: UseCases com mocks |         4h | Média      | ✅ Concluído    | [#19](https://github.com/Vandrs/common-cornershop/issues/19) |
 | T5.3 | #20   |     Testes — Integration Tests: Repository Implementations |         4h | Média      | ⬜ Não iniciado | [#20](https://github.com/Vandrs/common-cornershop/issues/20) |
 | T5.4 | #21   | Testes — Integration Tests: Controllers com Fastify inject |         4h | Média      | ⬜ Não iniciado | [#21](https://github.com/Vandrs/common-cornershop/issues/21) |
 | T5.5 | #22   |                   Testes — E2E Tests, Fixtures e Factories |         5h | Baixa      | ⬜ Não iniciado | [#22](https://github.com/Vandrs/common-cornershop/issues/22) |

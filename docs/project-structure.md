@@ -194,7 +194,9 @@ Recebem requests HTTP, validam input e delegam para UseCases.
 // order.controller.ts    - Gestão de pedidos
 ```
 
-Nota: os diretórios `controllers/`, `schemas/`, `repositories/`, `container/`, `middlewares/` e `plugins/` descritos anteriormente ainda não existem na `apps/api/src/`. A implementação parcial atual concentra-se em `main.ts`, `config/` e `database/` (migrations). Marcar como: `← a ser implementado (T4.1+)` onde apropriado.
+    Nota: a implementação parcial atual entrega o bootstrap da API (T4.1). Os arquivos abaixo já existem em `apps/api/src/`: `main.ts`, `app.ts`, `container/dependency-injection.ts`, `plugins/error-handler.plugin.ts` e stubs em `repositories/*.impl.ts`. Os diretórios `controllers/` e `schemas/` ainda serão preenchidos em T4.4+.
+
+    Além disso, a task T3.3 adicionou seeds idempotentes sob `apps/api/src/database/seeds/` e o script `yarn seed` foi registrado para popular dados de desenvolvimento (ver docs/database.md).
 
 ##### 2. `schemas/`
 
@@ -209,17 +211,18 @@ Schemas Zod para validação de requests.
 
 ##### 3. `repositories/`
 
-Implementações TypeORM das interfaces de repositório do domínio.
+Implementações TypeORM das interfaces de repositório do domínio. O bootstrap T4.1 adicionou stubs parciais (implementações mínimas) — essas devem ser revisadas, completadas com queries e cobertas por testes de integração (T5.3).
 
 ```typescript
-// category.repository.impl.ts
-// product.repository.impl.ts
-// stock.repository.impl.ts
-// order.repository.impl.ts
-// order-item.repository.impl.ts
+// apps/api/src/repositories/
+// ├── category.repository.impl.ts       # stub/implem. parcial (T4.1)
+// ├── product.repository.impl.ts        # stub/implem. parcial (T4.1)
+// ├── stock.repository.impl.ts          # stub/implem. parcial (T4.1)
+// ├── order.repository.impl.ts          # stub/implem. parcial (T4.1)
+// └── order-item.repository.impl.ts     # stub/implem. parcial (T4.1)
 ```
 
-Nota: atualmente as implementações em `apps/api/src/repositories/` NÃO estão presentes — os arquivos acima são parte da estrutura planejada. Utilize a pasta `apps/api/src/database/migrations/` e `data-source.ts` como referência para o estado atual. ← a ser implementado (T4.1+)
+Nota: revisar e completar as implementações (queries, relacionamentos e testes de integração) continua como próximo passo. Enquanto isso, os stubs já são registrados no container (apps/api/src/container/dependency-injection.ts) conforme T4.1.
 
 ##### 4. `database/`
 
@@ -236,10 +239,10 @@ Configuração de banco, migrations e seeds.
 Configuração do TSyringe (Dependency Injection).
 
 ```typescript
-// dependency-injection.ts - Registra todas as dependências
+// apps/api/src/container/dependency-injection.ts  # Registra tokens e implementações (entregue T4.1)
 ```
 
-Nota: o container central ainda não foi criado em `apps/api/src/container/` na branch `main`. Implementação prevista como parte de tarefas de infra (T4.1+).
+Nota: o container central foi adicionado como parte do bootstrap T4.1. Revisões e adições de bindings são esperadas à medida que repositórios e controllers forem implementados.
 
 ---
 
