@@ -30,7 +30,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 
 | Fase                      | Período sugerido | Status       |
 | ------------------------- | ---------------- | ------------ |
-| Fase 1 — Fundação         | Semana 1         | Em andamento |
+| Fase 1 — Fundação         | Semana 1         | ✅ Concluída |
 | Fase 2 — Core Domain & DB | Semana 1–2       | Em andamento |
 | Fase 3 — API Layer        | Semana 2–3       | Não iniciado |
 | Fase 4 — Quality          | Semana 3–4       | Não iniciado |
@@ -220,10 +220,10 @@ gantt
 
 - Objetivo: estabelecer monorepo NX, TypeScript, lint e shared libs.
 
-| ID   | Issue |                                                       Título | Estimativa | Prioridade | Status          | Link                                                       |
-| ---- | ----- | -----------------------------------------------------------: | ---------: | ---------- | --------------- | ---------------------------------------------------------- |
-| T0.1 | #2    | Monorepo Setup — NX + TypeScript + ESLint + Prettier + Husky |         4h | Alta       | ✅ Concluído    | [#2](https://github.com/Vandrs/common-cornershop/issues/2) |
-| T1.1 | #3    |           libs/shared — Utils, Validators, Constants e Types |         3h | Alta       | ⬜ Não iniciado | [#3](https://github.com/Vandrs/common-cornershop/issues/3) |
+| ID   | Issue |                                                       Título | Estimativa | Prioridade | Status       | Link                                                       |
+| ---- | ----- | -----------------------------------------------------------: | ---------: | ---------- | ------------ | ---------------------------------------------------------- |
+| T0.1 | #2    | Monorepo Setup — NX + TypeScript + ESLint + Prettier + Husky |         4h | Alta       | ✅ Concluído | [#2](https://github.com/Vandrs/common-cornershop/issues/2) |
+| T1.1 | #3    |           libs/shared — Utils, Validators, Constants e Types |         3h | Alta       | ✅ Concluído | [#3](https://github.com/Vandrs/common-cornershop/issues/3) |
 
 - Critério de conclusão: `yarn nx graph` funciona; shared exportável; ESLint/Prettier/Husky ativos.
 
@@ -233,7 +233,7 @@ gantt
 
 | ID   | Issue |                                                        Título | Estimativa | Prioridade | Status          | Link                                                         |
 | ---- | ----- | ------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T2.1 | #4    |              Domain — Entities, BaseEntity e OrderStatus Enum |         4h | Alta       | ⬜ Não iniciado | [#4](https://github.com/Vandrs/common-cornershop/issues/4)   |
+| T2.1 | #4    |              Domain — Entities, BaseEntity e OrderStatus Enum |         4h | Alta       | ✅ Concluído    | [#4](https://github.com/Vandrs/common-cornershop/issues/4)   |
 | T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ⬜ Não iniciado | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
 | T2.3 | #6    |                        Domain — Category: UseCases e Services |         3h | Média      | ⬜ Não iniciado | [#6](https://github.com/Vandrs/common-cornershop/issues/6)   |
 | T2.4 | #7    |                 Domain — Product + Stock: UseCases e Services |         4h | Média      | ⬜ Não iniciado | [#7](https://github.com/Vandrs/common-cornershop/issues/7)   |
