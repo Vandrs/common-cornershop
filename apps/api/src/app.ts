@@ -1,0 +1,37 @@
+import 'reflect-metadata';
+
+import Fastify, { FastifyInstance } from 'fastify';
+
+import { registerDependencies } from './container/dependency-injection';
+import { registerErrorHandler } from './plugins/error-handler.plugin';
+
+/**
+ * Factory function that builds and configures the Fastify application.
+ *
+ * Responsibilities (SRP — each step is isolated):
+ *  1. Register TSyringe DI bindings so the container is ready before any
+ *     route handler resolves a dependency.
+ *  2. Register the global error handler (ADR-0002).
+ *  3. Return the configured instance for the caller (`main.ts`) to start.
+ *
+ * Returning the instance (instead of calling `listen` here) keeps the factory
+ * unit-testable: tests can inject routes or call `app.inject()` without
+ * binding to a real port.
+ *
+ * @returns Configured, ready-to-listen Fastify instance.
+ */
+export async function createApp(): Promise<FastifyInstance> {
+  // Register all DI bindings before the app processes any request.
+  registerDependencies();
+
+  const app = Fastify({
+    logger: {
+      level: process.env.LOG_LEVEL ?? 'info',
+    },
+  });
+
+  // Register the centralised error handler (ADR-0002).
+  registerErrorHandler(app);
+
+  return app;
+}
