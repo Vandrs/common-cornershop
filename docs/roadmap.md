@@ -245,6 +245,11 @@ gantt
 
 - Critério de conclusão: migrations aplicam sem erro; seeds populam dados; use cases core têm testes unitários básicos.
 
+### Notas de status
+
+- T2.3 e T2.4: entregues nas branches de feature correspondentes (ver histórico das branches das tasks T2.3 e T2.4 nos PRs).
+- T3.1: entregue nesta branch: `feat/T3.1-typeorm-datasource`.
+
 ### Fase 3 — API Layer
 
 - Objetivo: expor use cases via Fastify, validação Zod e implementar repositórios TypeORM.
