@@ -18,46 +18,17 @@ common-cornershop/
 │   └── 🔌 api/                          # Camada de Infraestrutura/Apresentação
 │       ├── src/
 │       │   ├── main.ts                  # Entry point da aplicação
-│       │   ├── app/
-│       │   │   ├── app.ts               # Configuração do Fastify
-│       │   │   └── routes.ts            # Registro de rotas
-│       │   ├── controllers/             # Controllers HTTP
-│       │   │   ├── category.controller.ts
-│       │   │   ├── product.controller.ts
-│       │   │   └── order.controller.ts
-│       │   ├── schemas/                 # Schemas Zod para validação
-│       │   │   ├── category.schema.ts
-│       │   │   ├── product.schema.ts
-│       │   │   ├── order.schema.ts
-│       │   │   └── pagination.schema.ts
-│       │   ├── repositories/            # Implementações TypeORM
-│       │   │   ├── category.repository.impl.ts
-│       │   │   ├── product.repository.impl.ts
-│       │   │   ├── stock.repository.impl.ts
-│       │   │   ├── order.repository.impl.ts
-│       │   │   └── order-item.repository.impl.ts
-│       │   ├── database/
-│       │   │   ├── data-source.ts       # Configuração TypeORM
-│       │   │   ├── migrations/          # Migrations do banco
-│       │   │   │   ├── 1710501234567-CreateCategoryTable.ts
-│       │   │   │   ├── 1710501298765-CreateProductTable.ts
-│       │   │   │   ├── 1710501367890-CreateStockTable.ts
-│       │   │   │   ├── 1710501456789-CreateOrderTable.ts
-│       │   │   │   └── 1710501523456-CreateOrderItemTable.ts
-│       │   │   └── seeds/               # Dados iniciais
-│       │   │       ├── index.ts
-│       │   │       ├── category.seed.ts
-│       │   │       └── product.seed.ts
-│       │   ├── container/
-│       │   │   └── dependency-injection.ts  # Setup TSyringe
-│       │   ├── middlewares/             # Middlewares Fastify
-│       │   │   ├── error-handler.middleware.ts
-│       │   │   └── logger.middleware.ts
-│       │   ├── plugins/                 # Plugins Fastify
-│       │   │   └── cors.plugin.ts
-│       │   └── config/                  # Configurações
-│       │       ├── env.config.ts
-│       │       └── database.config.ts
+│       │   ├── config/
+│       │   │   ├── database.config.ts
+│       │   │   └── database.config.spec.ts
+│       │   └── database/
+│       │       ├── data-source.ts       # Configuração TypeORM
+│       │       └── migrations/          # Migrations do banco
+│       │           ├── 1743200000000-CreateCategoryTable.ts
+│       │           ├── 1743200010000-CreateProductTable.ts
+│       │           ├── 1743200020000-CreateStockTable.ts
+│       │           ├── 1743200030000-CreateOrderTable.ts
+│       │           └── 1743200040000-CreateOrderItemTable.ts
 │       ├── project.json                 # Configuração NX do projeto
 │       ├── tsconfig.json                # TypeScript config específico
 │       └── tsconfig.spec.json           # TypeScript config para testes
@@ -73,47 +44,69 @@ common-cornershop/
 │   │   │   │   ├── stock.entity.ts
 │   │   │   │   ├── order.entity.ts
 │   │   │   │   └── order-item.entity.ts
-│   │   │   ├── enums/
+│   │   │   ├── enums/                   # Enums (ex: OrderStatus)
 │   │   │   │   └── order-status.enum.ts
 │   │   │   ├── repositories/            # Interfaces dos Repositórios
 │   │   │   │   ├── category.repository.ts
 │   │   │   │   ├── product.repository.ts
 │   │   │   │   ├── stock.repository.ts
 │   │   │   │   ├── order.repository.ts
-│   │   │   │   ├── order-item.repository.ts
-│   │   │   │   └── repositories.spec.ts
-│   │   │   ├── categories/
-│   │   │   │   ├── use-cases/           # Casos de uso de categorias
-│   │   │   │   │   ├── list-categories.usecase.ts
-│   │   │   │   │   ├── get-category-by-id.usecase.ts
+│   │   │   │   └── order-item.repository.ts
+│   │   │   ├── use-cases/               # Casos de uso agrupados por entidade
+│   │   │   │   ├── category/
 │   │   │   │   │   ├── create-category.usecase.ts
-│   │   │   │   │   └── update-category.usecase.ts
-│   │   │   │   └── services/            # Serviços de negócio
-│   │   │   │       └── category-validation.service.ts
-│   │   │   ├── products/
-│   │   │   │   ├── use-cases/
-│   │   │   │   │   ├── list-products.usecase.ts
-│   │   │   │   │   ├── get-product-by-id.usecase.ts
+│   │   │   │   │   ├── create-category.usecase.spec.ts
+│   │   │   │   │   ├── list-categories.usecase.ts
+│   │   │   │   │   ├── list-categories.usecase.spec.ts
+│   │   │   │   │   ├── get-category.usecase.ts
+│   │   │   │   │   ├── get-category.usecase.spec.ts
+│   │   │   │   │   ├── update-category.usecase.ts
+│   │   │   │   │   ├── update-category.usecase.spec.ts
+│   │   │   │   │   ├── delete-category.usecase.ts
+│   │   │   │   │   └── delete-category.usecase.spec.ts
+│   │   │   │   ├── product/
 │   │   │   │   │   ├── create-product.usecase.ts
-│   │   │   │   │   └── update-product.usecase.ts
-│   │   │   │   └── services/
-│   │   │   │       ├── product-validation.service.ts
-│   │   │   │       └── product-price.service.ts
-│   │   │   ├── stock/
-│   │   │   │   ├── use-cases/
+│   │   │   │   │   ├── create-product.usecase.spec.ts
+│   │   │   │   │   ├── list-products.usecase.ts
+│   │   │   │   │   ├── list-products.usecase.spec.ts
+│   │   │   │   │   ├── get-product.usecase.ts
+│   │   │   │   │   ├── get-product.usecase.spec.ts
+│   │   │   │   │   ├── update-product.usecase.ts
+│   │   │   │   │   ├── update-product.usecase.spec.ts
+│   │   │   │   │   ├── delete-product.usecase.ts
+│   │   │   │   │   └── delete-product.usecase.spec.ts
+│   │   │   │   ├── stock/
+│   │   │   │   │   ├── get-stock.usecase.ts
+│   │   │   │   │   ├── get-stock.usecase.spec.ts
 │   │   │   │   │   ├── update-stock.usecase.ts
-│   │   │   │   │   └── check-stock-availability.usecase.ts
-│   │   │   │   └── services/
-│   │   │   │       └── stock-management.service.ts
-│   │   │   └── orders/
-│   │   │       ├── use-cases/
-│   │   │       │   ├── create-order.usecase.ts
-│   │   │       │   ├── list-orders.usecase.ts
-│   │   │       │   ├── get-order-by-id.usecase.ts
-│   │   │       │   └── get-order-status.usecase.ts
-│   │   │       └── services/
-│   │   │           ├── order-calculation.service.ts
-│   │   │           └── order-validation.service.ts
+│   │   │   │   │   └── update-stock.usecase.spec.ts
+│   │   │   │   └── orders/                # ← PR #40 aberto (T2.5)
+│   │   │   │       ├── create-order.usecase.ts
+│   │   │   │       ├── create-order.usecase.spec.ts
+│   │   │   │       ├── get-order.usecase.ts
+│   │   │   │       ├── get-order.usecase.spec.ts
+│   │   │   │       ├── list-orders.usecase.ts
+│   │   │   │       ├── list-orders.usecase.spec.ts
+│   │   │   │       ├── update-order-status.usecase.ts
+│   │   │   │       ├── update-order-status.usecase.spec.ts
+│   │   │   │       ├── cancel-order.usecase.ts
+│   │   │   │       └── cancel-order.usecase.spec.ts
+│   │   │   ├── services/                  # Serviços (flat)
+│   │   │   │   ├── category.service.ts
+│   │   │   │   ├── category.service.spec.ts
+│   │   │   │   ├── product.service.ts
+│   │   │   │   ├── product.service.spec.ts
+│   │   │   │   ├── stock.service.ts
+│   │   │   │   ├── stock.service.spec.ts
+│   │   │   │   └── order.service.ts       # ← PR #40 aberto (T2.5)
+│   │   │   ├── errors/                    # Erros de domínio (flat)
+│   │   │   │   ├── domain.error.ts
+│   │   │   │   ├── category-not-found.error.ts
+│   │   │   │   ├── product-not-found.error.ts
+│   │   │   │   ├── insufficient-stock.error.ts
+│   │   │   │   ├── order-not-found.error.ts
+│   │   │   │   └── invalid-order-status-transition.error.ts  # ← PR #40 aberto (T2.5)
+│   │   │   └── index.ts
 │   │   ├── project.json
 │   │   ├── tsconfig.json
 │   │   └── tsconfig.spec.json
@@ -147,13 +140,12 @@ common-cornershop/
 │
 ├── 🧪 tests/                            # Testes E2E
 │   └── e2e/
-│       ├── orders.e2e-spec.ts
-│       └── products.e2e-spec.ts
+│       └── (vazio no momento)           # ← a ser implementado (T3.3)
 │
 ├── 📋 .github/                          # GitHub configs
 │   └── workflows/
-│       ├── ci.yml
-│       └── cd.yml
+│       ├── ci.yml                       # ← a ser implementado (T6.2)
+│       └── cd.yml                       # ← a ser implementado (T6.2)
 │
 ├── 🐳 docker-compose.yml                # Configuração Docker
 ├── .dockerignore
@@ -202,6 +194,8 @@ Recebem requests HTTP, validam input e delegam para UseCases.
 // order.controller.ts    - Gestão de pedidos
 ```
 
+Nota: os diretórios `controllers/`, `schemas/`, `repositories/`, `container/`, `middlewares/` e `plugins/` descritos anteriormente ainda não existem na `apps/api/src/`. A implementação parcial atual concentra-se em `main.ts`, `config/` e `database/` (migrations). Marcar como: `← a ser implementado (T4.1+)` onde apropriado.
+
 ##### 2. `schemas/`
 
 Schemas Zod para validação de requests.
@@ -225,6 +219,8 @@ Implementações TypeORM das interfaces de repositório do domínio.
 // order-item.repository.impl.ts
 ```
 
+Nota: atualmente as implementações em `apps/api/src/repositories/` NÃO estão presentes — os arquivos acima são parte da estrutura planejada. Utilize a pasta `apps/api/src/database/migrations/` e `data-source.ts` como referência para o estado atual. ← a ser implementado (T4.1+)
+
 ##### 4. `database/`
 
 Configuração de banco, migrations e seeds.
@@ -242,6 +238,8 @@ Configuração do TSyringe (Dependency Injection).
 ```typescript
 // dependency-injection.ts - Registra todas as dependências
 ```
+
+Nota: o container central ainda não foi criado em `apps/api/src/container/` na branch `main`. Implementação prevista como parte de tarefas de infra (T4.1+).
 
 ---
 
@@ -288,9 +286,14 @@ Interfaces dos repositórios (contratos).
 Casos de uso (orquestração de lógica de negócio).
 
 ```typescript
-// create-order.usecase.ts     - Criar pedido
-// list-products.usecase.ts    - Listar produtos
-// get-order-status.usecase.ts - Obter status
+// NOTE: Use-cases are implemented in a flat grouped-by-entity layout under `libs/domain/src/use-cases/`.
+// Examples (actual files):
+// category/create-category.usecase.ts + .spec.ts
+// category/list-categories.usecase.ts + .spec.ts
+// product/create-product.usecase.ts + .spec.ts
+// product/list-products.usecase.ts + .spec.ts
+// stock/get-stock.usecase.ts + .spec.ts
+// orders/create-order.usecase.ts + .spec.ts   ← PR #40 aberto (T2.5)
 ```
 
 ##### 4. `{module}/services/`
@@ -308,10 +311,9 @@ Serviços de negócio reutilizáveis.
 Data Transfer Objects (tipos para transferência de dados).
 
 ```typescript
-// category.dto.ts   - DTOs de categoria
-// product.dto.ts    - DTOs de produto
-// order.dto.ts      - DTOs de pedido
-// pagination.dto.ts - DTO de paginação
+// NOTE: There is NO `dtos/` directory in the implemented codebase. DTOs are declared as inline TypeScript
+// interfaces inside the use-case or service file where they are needed (for example: CreateCategoryDTO is
+// declared inside category.service.ts). When needed by other layers, they are re-exported from the barrel `index.ts`.
 ```
 
 ---
