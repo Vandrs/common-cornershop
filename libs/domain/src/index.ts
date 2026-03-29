@@ -15,6 +15,7 @@ export { ProductNotFoundException } from './errors/product-not-found.error';
 export { CategoryNotFoundException } from './errors/category-not-found.error';
 export { InsufficientStockError } from './errors/insufficient-stock.error';
 export { OrderNotFoundException } from './errors/order-not-found.error';
+export { InvalidOrderStatusTransitionError } from './errors/invalid-order-status-transition.error';
 
 // Repositories
 export type { ICategoryRepository, CategoryListParams } from './repositories/category.repository';
@@ -28,6 +29,8 @@ export { CategoryService } from './services/category.service';
 export type { CreateCategoryDTO, UpdateCategoryDTO } from './services/category.service';
 export { ProductService } from './services/product.service';
 export { StockService } from './services/stock.service';
+export { OrderService } from './services/order.service';
+export type { CreateOrderItemDTO, OrderItemData } from './services/order.service';
 
 // Category Use Cases
 export { CreateCategoryUseCase } from './use-cases/category/create-category.usecase';
@@ -51,3 +54,12 @@ export { DeleteProductUseCase } from './use-cases/product/delete-product.usecase
 export { GetStockUseCase } from './use-cases/stock/get-stock.usecase';
 export { UpdateStockUseCase } from './use-cases/stock/update-stock.usecase';
 export type { UpdateStockDTO } from './use-cases/stock/update-stock.usecase';
+
+// Order Use Cases
+export { CreateOrderUseCase } from './use-cases/orders/create-order.usecase';
+export type { CreateOrderDTO } from './use-cases/orders/create-order.usecase';
+export { GetOrderUseCase } from './use-cases/orders/get-order.usecase';
+export { ListOrdersUseCase } from './use-cases/orders/list-orders.usecase';
+export { UpdateOrderStatusUseCase } from './use-cases/orders/update-order-status.usecase';
+export type { UpdateOrderStatusDTO } from './use-cases/orders/update-order-status.usecase';
+export { CancelOrderUseCase } from './use-cases/orders/cancel-order.usecase';
