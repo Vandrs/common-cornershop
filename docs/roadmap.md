@@ -243,6 +243,8 @@ gantt
 | T3.3 | #11   |               Infra DB — Seeds (Categories, Products e Stock) |         2h | Média      | ⬜ Não iniciado | [#11](https://github.com/Vandrs/common-cornershop/issues/11) |
 | T6.1 | #23   |           DevOps — Docker e docker-compose (app + PostgreSQL) |         2h | Média      | ✅ Concluído    | [#23](https://github.com/Vandrs/common-cornershop/issues/23) |
 
+- Nota: T2.3 implementado na branch `feat/T2.3-category-usecases`.
+
 - Critério de conclusão: migrations aplicam sem erro; seeds populam dados; use cases core têm testes unitários básicos.
 
 ### Notas de status
