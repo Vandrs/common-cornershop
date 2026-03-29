@@ -137,7 +137,7 @@ export class CreateProductTable1710501234567 implements MigrationInterface {
           },
         ],
       }),
-      true
+      true,
     );
 
     // Adicionar foreign key
@@ -149,7 +149,7 @@ export class CreateProductTable1710501234567 implements MigrationInterface {
         referencedTableName: 'categories',
         onDelete: 'RESTRICT',
         onUpdate: 'CASCADE',
-      })
+      }),
     );
 
     // Adicionar índice
@@ -158,7 +158,7 @@ export class CreateProductTable1710501234567 implements MigrationInterface {
       new TableIndex({
         name: 'IDX_PRODUCT_CATEGORY',
         columnNames: ['category_id'],
-      })
+      }),
     );
 
     // Adicionar índice único composto
@@ -168,20 +168,18 @@ export class CreateProductTable1710501234567 implements MigrationInterface {
         name: 'IDX_PRODUCT_NAME_CATEGORY',
         columnNames: ['name', 'category_id'],
         isUnique: true,
-      })
+      }),
     );
 
     // Adicionar check constraint
     await queryRunner.query(
-      `ALTER TABLE products ADD CONSTRAINT CHK_PRODUCT_PRICE_POSITIVE CHECK (price > 0)`
+      `ALTER TABLE products ADD CONSTRAINT CHK_PRODUCT_PRICE_POSITIVE CHECK (price > 0)`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Remover check constraint
-    await queryRunner.query(
-      `ALTER TABLE products DROP CONSTRAINT CHK_PRODUCT_PRICE_POSITIVE`
-    );
+    await queryRunner.query(`ALTER TABLE products DROP CONSTRAINT CHK_PRODUCT_PRICE_POSITIVE`);
 
     // Remover índices
     await queryRunner.dropIndex('products', 'IDX_PRODUCT_NAME_CATEGORY');
@@ -189,9 +187,7 @@ export class CreateProductTable1710501234567 implements MigrationInterface {
 
     // Remover foreign key
     const table = await queryRunner.getTable('products');
-    const foreignKey = table.foreignKeys.find(
-      fk => fk.columnNames.indexOf('category_id') !== -1
-    );
+    const foreignKey = table.foreignKeys.find((fk) => fk.columnNames.indexOf('category_id') !== -1);
     await queryRunner.dropForeignKey('products', foreignKey);
 
     // Remover tabela
@@ -217,20 +213,18 @@ export class AddMinimumQuantityToStock1710501589012 implements MigrationInterfac
         type: 'integer',
         default: 0,
         isNullable: false,
-      })
+      }),
     );
 
     // Adicionar check constraint
     await queryRunner.query(
-      `ALTER TABLE stock ADD CONSTRAINT CHK_STOCK_MIN_QTY_POSITIVE CHECK (minimum_quantity >= 0)`
+      `ALTER TABLE stock ADD CONSTRAINT CHK_STOCK_MIN_QTY_POSITIVE CHECK (minimum_quantity >= 0)`,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE stock DROP CONSTRAINT CHK_STOCK_MIN_QTY_POSITIVE`
-    );
-    
+    await queryRunner.query(`ALTER TABLE stock DROP CONSTRAINT CHK_STOCK_MIN_QTY_POSITIVE`);
+
     await queryRunner.dropColumn('stock', 'minimum_quantity');
   }
 }
@@ -312,10 +306,10 @@ export async function seedCategories(dataSource: DataSource): Promise<void> {
   ];
 
   for (const categoryData of categories) {
-    const exists = await repository.findOne({ 
-      where: { name: categoryData.name } 
+    const exists = await repository.findOne({
+      where: { name: categoryData.name },
     });
-    
+
     if (!exists) {
       const category = repository.create(categoryData);
       await repository.save(category);
@@ -346,11 +340,11 @@ export async function seedProducts(dataSource: DataSource): Promise<void> {
   const stockRepository = dataSource.getRepository(Stock);
 
   // Buscar categorias
-  const beverageCategory = await categoryRepository.findOne({ 
-    where: { name: 'Bebidas' } 
+  const beverageCategory = await categoryRepository.findOne({
+    where: { name: 'Bebidas' },
   });
-  const snackCategory = await categoryRepository.findOne({ 
-    where: { name: 'Snacks' } 
+  const snackCategory = await categoryRepository.findOne({
+    where: { name: 'Snacks' },
   });
 
   if (!beverageCategory || !snackCategory) {
@@ -362,7 +356,7 @@ export async function seedProducts(dataSource: DataSource): Promise<void> {
     {
       name: 'Coca-Cola 2L',
       description: 'Refrigerante de cola',
-      price: 8.50,
+      price: 8.5,
       categoryId: beverageCategory.id,
       isActive: true,
       stockQuantity: 45,
@@ -371,7 +365,7 @@ export async function seedProducts(dataSource: DataSource): Promise<void> {
     {
       name: 'Guaraná Antarctica 2L',
       description: 'Refrigerante de guaraná',
-      price: 7.50,
+      price: 7.5,
       categoryId: beverageCategory.id,
       isActive: true,
       stockQuantity: 30,
@@ -390,12 +384,12 @@ export async function seedProducts(dataSource: DataSource): Promise<void> {
 
   for (const productData of products) {
     const { stockQuantity, stockMinimum, ...productInfo } = productData;
-    
+
     const exists = await productRepository.findOne({
-      where: { 
+      where: {
         name: productInfo.name,
-        categoryId: productInfo.categoryId
-      }
+        categoryId: productInfo.categoryId,
+      },
     });
 
     if (!exists) {
@@ -526,24 +520,42 @@ docker exec -i cornershop-db psql -U postgres cornershop < backup_20260315_15000
 
 ## Configuração do DataSource
 
+1. Todas as variáveis de ambiente passam por validação com **Zod** em `apps/api/src/config/database.config.ts`. O schema exige `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` e suporta flags de TLS `DB_SSL` e `DB_SSL_REJECT_UNAUTHORIZED` (ambas strings `'true' | 'false'`).
+2. O datasource importa a configuração validada e referencia explicitamente todas as entities do domínio para evitar globs inconsistentes no build do **NX**.
+3. `synchronize` permanece **sempre `false`** — use migrations para qualquer alteração de schema.
+
 ```typescript
 // apps/api/src/database/data-source.ts
 import { DataSource } from 'typeorm';
 
+import { Category } from '@domain/entities/category.entity';
+import { Product } from '@domain/entities/product.entity';
+import { Stock } from '@domain/entities/stock.entity';
+import { Order } from '@domain/entities/order.entity';
+import { OrderItem } from '@domain/entities/order-item.entity';
+
+import { getDatabaseConfig } from '../config/database.config';
+
+const dbConfig = getDatabaseConfig();
+
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_DATABASE || 'cornershop',
-  entities: ['libs/domain/src/entities/**/*.entity.ts'],
-  migrations: ['apps/api/src/database/migrations/**/*.ts'],
-  synchronize: false, // NUNCA true em produção
+  host: dbConfig.host,
+  port: dbConfig.port,
+  username: dbConfig.username,
+  password: dbConfig.password,
+  database: dbConfig.database,
+  synchronize: false,
   logging: process.env.NODE_ENV === 'development',
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  entities: [Category, Product, Stock, Order, OrderItem],
+  migrations: [__dirname + '/migrations/*.{ts,js}'],
+  ssl: dbConfig.ssl ? { rejectUnauthorized: dbConfig.sslRejectUnauthorized } : false,
 });
 ```
+
+> ⚠️ **TLS**: habilite `DB_SSL=true` em produção. Mantenha `DB_SSL_REJECT_UNAUTHORIZED=true` para validar o certificado e evitar MITM. Desabilite somente quando estiver em um ambiente controlado com certificados autoassinados.
+
+Os arquivos de migrations compilados pelo NX continuam na pasta `apps/api/src/database/migrations`. O glob `__dirname + '/migrations/*.{ts,js}'` garante que tanto os arquivos `.ts` (aprendidos pelo `ts-node`/Jest) quanto os `.js` (output de build) sejam detectados pela CLI do TypeORM.
 
 ---
 
