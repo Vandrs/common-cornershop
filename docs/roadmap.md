@@ -237,9 +237,9 @@ gantt
 | T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ✅ Concluído    | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
 | T2.3 | #6    |                        Domain — Category: UseCases e Services |         3h | Média      | ✅ Concluída    | [#6](https://github.com/Vandrs/common-cornershop/issues/6)   |
 | T2.4 | #7    |                 Domain — Product + Stock: UseCases e Services |         4h | Média      | ✅ Concluída    | [#7](https://github.com/Vandrs/common-cornershop/issues/7)   |
-| T2.5 | #8    |               Domain — Order + OrderItem: UseCases e Services |         5h | Média      | ⬜ Não iniciado | [#8](https://github.com/Vandrs/common-cornershop/issues/8)   |
+| T2.5 | #8    |               Domain — Order + OrderItem: UseCases e Services |         5h | Média      | ✅ Concluída    | [#8](https://github.com/Vandrs/common-cornershop/issues/8)   |
 | T3.1 | #9    | Infra DB — TypeORM DataSource, Config e variáveis de ambiente |         2h | Alta       | ✅ Concluída    | [#9](https://github.com/Vandrs/common-cornershop/issues/9)   |
-| T3.2 | #10   |                             Infra DB — Migrations (5 tabelas) |         4h | Alta       | ⬜ Não iniciado | [#10](https://github.com/Vandrs/common-cornershop/issues/10) |
+| T3.2 | #10   |                             Infra DB — Migrations (5 tabelas) |         4h | Alta       | ✅ Concluída    | [#10](https://github.com/Vandrs/common-cornershop/issues/10) |
 | T3.3 | #11   |               Infra DB — Seeds (Categories, Products e Stock) |         2h | Média      | ⬜ Não iniciado | [#11](https://github.com/Vandrs/common-cornershop/issues/11) |
 | T6.1 | #23   |           DevOps — Docker e docker-compose (app + PostgreSQL) |         2h | Média      | ✅ Concluído    | [#23](https://github.com/Vandrs/common-cornershop/issues/23) |
 
@@ -251,6 +251,8 @@ gantt
 
 - T2.3 e T2.4: entregues nas branches de feature correspondentes (ver histórico das branches das tasks T2.3 e T2.4 nos PRs).
 - T3.1: entregue nesta branch: `feat/T3.1-typeorm-datasource`.
+- T2.5: entregue na branch `feat/T2.5-order-usecases` — OrderService, InvalidOrderStatusTransitionError e 5 UseCases (Create, Get, List, UpdateStatus, Cancel) com 37 novos testes unitários.
+- T3.2: entregue na branch `feat/T3.2-database-migrations` — 5 migrations TypeORM (categories → products → stocks → orders → order_items) com FKs, índices e check constraints.
 
 ### Fase 3 — API Layer
 
