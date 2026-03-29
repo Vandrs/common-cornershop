@@ -75,17 +75,13 @@ common-cornershop/
 │   │   │   │   └── order-item.entity.ts
 │   │   │   ├── enums/
 │   │   │   │   └── order-status.enum.ts
-│   │   │   ├── dtos/                    # Data Transfer Objects
-│   │   │   │   ├── category.dto.ts
-│   │   │   │   ├── product.dto.ts
-│   │   │   │   ├── order.dto.ts
-│   │   │   │   └── pagination.dto.ts
 │   │   │   ├── repositories/            # Interfaces dos Repositórios
 │   │   │   │   ├── category.repository.ts
 │   │   │   │   ├── product.repository.ts
 │   │   │   │   ├── stock.repository.ts
 │   │   │   │   ├── order.repository.ts
-│   │   │   │   └── order-item.repository.ts
+│   │   │   │   ├── order-item.repository.ts
+│   │   │   │   └── repositories.spec.ts
 │   │   │   ├── categories/
 │   │   │   │   ├── use-cases/           # Casos de uso de categorias
 │   │   │   │   │   ├── list-categories.usecase.ts
@@ -183,6 +179,7 @@ common-cornershop/
 ### 📦 apps/api/ (Infraestrutura & Apresentação)
 
 Camada responsável por:
+
 - Expor a API HTTP (Fastify)
 - Validar requests (Zod schemas)
 - Implementar repositórios (TypeORM)
@@ -196,6 +193,7 @@ Camada responsável por:
 #### Subdiretórios Principais
 
 ##### 1. `controllers/`
+
 Recebem requests HTTP, validam input e delegam para UseCases.
 
 ```typescript
@@ -205,6 +203,7 @@ Recebem requests HTTP, validam input e delegam para UseCases.
 ```
 
 ##### 2. `schemas/`
+
 Schemas Zod para validação de requests.
 
 ```typescript
@@ -215,6 +214,7 @@ Schemas Zod para validação de requests.
 ```
 
 ##### 3. `repositories/`
+
 Implementações TypeORM das interfaces de repositório do domínio.
 
 ```typescript
@@ -226,6 +226,7 @@ Implementações TypeORM das interfaces de repositório do domínio.
 ```
 
 ##### 4. `database/`
+
 Configuração de banco, migrations e seeds.
 
 ```typescript
@@ -235,6 +236,7 @@ Configuração de banco, migrations e seeds.
 ```
 
 ##### 5. `container/`
+
 Configuração do TSyringe (Dependency Injection).
 
 ```typescript
@@ -246,6 +248,7 @@ Configuração do TSyringe (Dependency Injection).
 ### 📚 libs/domain/ (Lógica de Negócio)
 
 Camada responsável por:
+
 - Definir entidades de domínio
 - Implementar regras de negócio
 - Orquestrar casos de uso
@@ -259,6 +262,7 @@ Camada responsável por:
 #### Subdiretórios Principais
 
 ##### 1. `entities/`
+
 Entidades de domínio com TypeORM decorators.
 
 ```typescript
@@ -271,6 +275,7 @@ Entidades de domínio com TypeORM decorators.
 ```
 
 ##### 2. `repositories/`
+
 Interfaces dos repositórios (contratos).
 
 ```typescript
@@ -279,6 +284,7 @@ Interfaces dos repositórios (contratos).
 ```
 
 ##### 3. `{module}/use-cases/`
+
 Casos de uso (orquestração de lógica de negócio).
 
 ```typescript
@@ -288,6 +294,7 @@ Casos de uso (orquestração de lógica de negócio).
 ```
 
 ##### 4. `{module}/services/`
+
 Serviços de negócio reutilizáveis.
 
 ```typescript
@@ -297,6 +304,7 @@ Serviços de negócio reutilizáveis.
 ```
 
 ##### 5. `dtos/`
+
 Data Transfer Objects (tipos para transferência de dados).
 
 ```typescript
@@ -311,6 +319,7 @@ Data Transfer Objects (tipos para transferência de dados).
 ### 🔧 libs/shared/ (Utilitários)
 
 Camada responsável por:
+
 - Funções auxiliares reutilizáveis
 - Validadores customizados
 - Constantes globais
@@ -323,6 +332,7 @@ Camada responsável por:
 #### Subdiretórios Principais
 
 ##### 1. `utils/`
+
 Funções auxiliares puras.
 
 ```typescript
@@ -332,6 +342,7 @@ Funções auxiliares puras.
 ```
 
 ##### 2. `validators/`
+
 Validadores reutilizáveis.
 
 ```typescript
@@ -339,6 +350,7 @@ Validadores reutilizáveis.
 ```
 
 ##### 3. `constants/`
+
 Constantes globais.
 
 ```typescript
@@ -346,6 +358,7 @@ Constantes globais.
 ```
 
 ##### 4. `types/`
+
 Types TypeScript compartilhados.
 
 ```typescript
@@ -395,27 +408,27 @@ flowchart TB
         M[Migrations]
         S[Schemas Zod]
     end
-    
+
     subgraph "libs/domain (Business Logic)"
         UC[UseCases]
         SRV[Services]
         E[Entities]
         RI[Repository Interfaces]
     end
-    
+
     subgraph "libs/shared (Utilities)"
         U[Utils]
         V[Validators]
         CO[Constants]
     end
-    
+
     C -->|uses| UC
     UC -->|uses| SRV
     UC -->|uses| RI
     R -->|implements| RI
     SRV -->|uses| U
     UC -->|uses| V
-    
+
     style C fill:#ff6b6b
     style UC fill:#4ecdc4
     style SRV fill:#45b7d1
@@ -468,15 +481,15 @@ yarn nx reset
 
 ## Convenções de Nomenclatura
 
-| Tipo | Padrão | Exemplo |
-|------|--------|---------|
-| **Diretórios** | `kebab-case` | `order-items/`, `use-cases/` |
-| **Arquivos** | `{nome}.{tipo}.{ext}` | `product.service.ts` |
-| **Entities** | `{nome}.entity.ts` | `order.entity.ts` |
-| **UseCases** | `{action}-{entity}.usecase.ts` | `create-order.usecase.ts` |
-| **Services** | `{nome}.service.ts` | `order-calculation.service.ts` |
-| **Repositories** | `{nome}.repository.ts` | `product.repository.ts` |
-| **Impl** | `{nome}.repository.impl.ts` | `product.repository.impl.ts` |
+| Tipo             | Padrão                         | Exemplo                        |
+| ---------------- | ------------------------------ | ------------------------------ |
+| **Diretórios**   | `kebab-case`                   | `order-items/`, `use-cases/`   |
+| **Arquivos**     | `{nome}.{tipo}.{ext}`          | `product.service.ts`           |
+| **Entities**     | `{nome}.entity.ts`             | `order.entity.ts`              |
+| **UseCases**     | `{action}-{entity}.usecase.ts` | `create-order.usecase.ts`      |
+| **Services**     | `{nome}.service.ts`            | `order-calculation.service.ts` |
+| **Repositories** | `{nome}.repository.ts`         | `product.repository.ts`        |
+| **Impl**         | `{nome}.repository.impl.ts`    | `product.repository.impl.ts`   |
 
 ---
 
