@@ -234,7 +234,7 @@ gantt
 | ID   | Issue |                                                        Título | Estimativa | Prioridade | Status          | Link                                                         |
 | ---- | ----- | ------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
 | T2.1 | #4    |              Domain — Entities, BaseEntity e OrderStatus Enum |         4h | Alta       | ✅ Concluído    | [#4](https://github.com/Vandrs/common-cornershop/issues/4)   |
-| T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ⬜ Não iniciado | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
+| T2.2 | #5    |                  Domain — Repository Interfaces (5 contratos) |         2h | Alta       | ✅ Concluído    | [#5](https://github.com/Vandrs/common-cornershop/issues/5)   |
 | T2.3 | #6    |                        Domain — Category: UseCases e Services |         3h | Média      | ⬜ Não iniciado | [#6](https://github.com/Vandrs/common-cornershop/issues/6)   |
 | T2.4 | #7    |                 Domain — Product + Stock: UseCases e Services |         4h | Média      | ⬜ Não iniciado | [#7](https://github.com/Vandrs/common-cornershop/issues/7)   |
 | T2.5 | #8    |               Domain — Order + OrderItem: UseCases e Services |         5h | Média      | ⬜ Não iniciado | [#8](https://github.com/Vandrs/common-cornershop/issues/8)   |
