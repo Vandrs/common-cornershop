@@ -22,3 +22,32 @@ export type { IProductRepository, ProductListParams } from './repositories/produ
 export type { IStockRepository, StockListParams } from './repositories/stock.repository';
 export type { IOrderRepository, OrderListParams } from './repositories/order.repository';
 export type { IOrderItemRepository } from './repositories/order-item.repository';
+
+// Services
+export { CategoryService } from './services/category.service';
+export type { CreateCategoryDTO, UpdateCategoryDTO } from './services/category.service';
+export { ProductService } from './services/product.service';
+export { StockService } from './services/stock.service';
+
+// Category Use Cases
+export { CreateCategoryUseCase } from './use-cases/category/create-category.usecase';
+export { ListCategoriesUseCase } from './use-cases/category/list-categories.usecase';
+export type { ListCategoriesDTO } from './use-cases/category/list-categories.usecase';
+export { GetCategoryUseCase } from './use-cases/category/get-category.usecase';
+export { UpdateCategoryUseCase } from './use-cases/category/update-category.usecase';
+export type { UpdateCategoryInput } from './use-cases/category/update-category.usecase';
+export { DeleteCategoryUseCase } from './use-cases/category/delete-category.usecase';
+
+// Product Use Cases
+export { CreateProductUseCase } from './use-cases/product/create-product.usecase';
+export type { CreateProductDTO } from './use-cases/product/create-product.usecase';
+export { ListProductsUseCase } from './use-cases/product/list-products.usecase';
+export { GetProductUseCase } from './use-cases/product/get-product.usecase';
+export { UpdateProductUseCase } from './use-cases/product/update-product.usecase';
+export type { UpdateProductDTO } from './use-cases/product/update-product.usecase';
+export { DeleteProductUseCase } from './use-cases/product/delete-product.usecase';
+
+// Stock Use Cases
+export { GetStockUseCase } from './use-cases/stock/get-stock.usecase';
+export { UpdateStockUseCase } from './use-cases/stock/update-stock.usecase';
+export type { UpdateStockDTO } from './use-cases/stock/update-stock.usecase';
