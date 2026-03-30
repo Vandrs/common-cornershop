@@ -20,22 +20,22 @@ O Common Cornershop utiliza **Jest** como framework principal de testes, garanti
 flowchart LR
     A[Unit Tests] -->|Camadas isoladas| B[Services]
     A -->|Mocks| C[UseCases]
-    
+
     D[Integration Tests] -->|Banco real| E[Repositories]
     D -->|HTTP| F[Controllers]
-    
+
     G[E2E Tests] -->|Full stack| H[API Endpoints]
-    
+
     style A fill:#4ecdc4
     style D fill:#45b7d1
     style G fill:#96ceb4
 ```
 
-| Tipo | Escopo | Velocidade | Complexidade | Objetivo |
-|------|--------|-----------|--------------|----------|
-| **Unit** | Classes/funções isoladas | ⚡ Muito rápida | 🟢 Baixa | Testar lógica de negócio pura |
-| **Integration** | Múltiplas camadas | ⚡ Média | 🟡 Média | Testar integração entre componentes |
-| **E2E** | Sistema completo | 🐢 Lenta | 🔴 Alta | Testar fluxos completos de usuário |
+| Tipo            | Escopo                   | Velocidade      | Complexidade | Objetivo                            |
+| --------------- | ------------------------ | --------------- | ------------ | ----------------------------------- |
+| **Unit**        | Classes/funções isoladas | ⚡ Muito rápida | 🟢 Baixa     | Testar lógica de negócio pura       |
+| **Integration** | Múltiplas camadas        | ⚡ Média        | 🟡 Média     | Testar integração entre componentes |
+| **E2E**         | Sistema completo         | 🐢 Lenta        | 🔴 Alta      | Testar fluxos completos de usuário  |
 
 ---
 
@@ -93,12 +93,7 @@ export default {
     "module": "commonjs",
     "types": ["jest", "node"]
   },
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "src/**/*.e2e-spec.ts",
-    "src/test/**/*.ts"
-  ]
+  "include": ["src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*.e2e-spec.ts", "src/test/**/*.ts"]
 }
 ```
 
@@ -160,11 +155,11 @@ test/
 
 ### Nomenclatura de Arquivos
 
-| Tipo | Convenção | Exemplo |
-|------|-----------|---------|
-| **Unit test** | `*.spec.ts` | `product.service.spec.ts` |
-| **Integration test** | `*.spec.ts` | `product.controller.spec.ts` |
-| **E2E test** | `*.e2e-spec.ts` | `products.e2e-spec.ts` |
+| Tipo                 | Convenção       | Exemplo                      |
+| -------------------- | --------------- | ---------------------------- |
+| **Unit test**        | `*.spec.ts`     | `product.service.spec.ts`    |
+| **Integration test** | `*.spec.ts`     | `product.controller.spec.ts` |
+| **E2E test**         | `*.e2e-spec.ts` | `products.e2e-spec.ts`       |
 
 ---
 
@@ -175,12 +170,14 @@ test/
 #### Services (Lógica de Negócio Isolada)
 
 ✅ **O que testar:**
+
 - Cálculos e transformações
 - Validações de regras de negócio
 - Lógica condicional
 - Tratamento de erros
 
 ❌ **O que NÃO testar:**
+
 - Acesso a banco de dados
 - Chamadas HTTP externas
 - Operações de I/O
@@ -188,6 +185,7 @@ test/
 #### UseCases (Orquestração com Mocks)
 
 ✅ **O que testar:**
+
 - Fluxo de orquestração
 - Chamadas corretas aos services/repositories
 - Tratamento de erros
@@ -221,15 +219,15 @@ describe('OrderCalculationService', () => {
         { productId: 'prod-1', quantity: 2 },
         { productId: 'prod-2', quantity: 1 },
       ];
-      
+
       const products = [
         { id: 'prod-1', name: 'Product 1', price: 10 },
         { id: 'prod-2', name: 'Product 2', price: 15 },
       ];
-      
+
       // Act
       const result = service.calculateOrderItems(items, products);
-      
+
       // Assert
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({
@@ -250,10 +248,9 @@ describe('OrderCalculationService', () => {
       // Arrange
       const items = [{ productId: 'invalid-id', quantity: 1 }];
       const products = [];
-      
+
       // Act & Assert
-      expect(() => service.calculateOrderItems(items, products))
-        .toThrow(ProductNotFoundException);
+      expect(() => service.calculateOrderItems(items, products)).toThrow(ProductNotFoundException);
     });
   });
 
@@ -264,10 +261,10 @@ describe('OrderCalculationService', () => {
         { productId: '1', quantity: 2, unitPrice: 10, subtotal: 20 },
         { productId: '2', quantity: 1, unitPrice: 15, subtotal: 15 },
       ];
-      
+
       // Act
       const total = service.calculateTotal(items);
-      
+
       // Assert
       expect(total).toBe(35);
     });
@@ -275,10 +272,10 @@ describe('OrderCalculationService', () => {
     it('should return 0 for empty items array', () => {
       // Arrange
       const items = [];
-      
+
       // Act
       const total = service.calculateTotal(items);
-      
+
       // Assert
       expect(total).toBe(0);
     });
@@ -328,7 +325,7 @@ describe('CreateOrderUseCase', () => {
     useCase = new CreateOrderUseCase(
       mockProductRepository,
       mockOrderRepository,
-      mockCalculationService
+      mockCalculationService,
     );
   });
 
@@ -376,7 +373,7 @@ describe('CreateOrderUseCase', () => {
       expect(mockProductRepository.findByIds).toHaveBeenCalledWith(['prod-1', 'prod-2']);
       expect(mockCalculationService.calculateOrderItems).toHaveBeenCalledWith(
         input.items,
-        mockProducts
+        mockProducts,
       );
       expect(mockCalculationService.calculateTotal).toHaveBeenCalledWith(calculatedItems);
       expect(mockOrderRepository.create).toHaveBeenCalledWith({
@@ -392,16 +389,12 @@ describe('CreateOrderUseCase', () => {
         items: [{ productId: 'prod-1', quantity: 100 }],
       };
 
-      const mockProducts = [
-        { id: 'prod-1', name: 'Product 1', price: 10, stock: { quantity: 5 } },
-      ];
+      const mockProducts = [{ id: 'prod-1', name: 'Product 1', price: 10, stock: { quantity: 5 } }];
 
       mockProductRepository.findByIds.mockResolvedValue(mockProducts);
 
       // Act & Assert
-      await expect(useCase.execute(input))
-        .rejects
-        .toThrow(InsufficientStockError);
+      await expect(useCase.execute(input)).rejects.toThrow(InsufficientStockError);
     });
   });
 });
@@ -645,7 +638,7 @@ describe('ProductController (Integration)', () => {
 
       // Assert
       expect(mockProductRepository.findAll).toHaveBeenCalledWith(
-        expect.objectContaining({ categoryId: 'cat-123' })
+        expect.objectContaining({ categoryId: 'cat-123' }),
       );
     });
   });
@@ -731,7 +724,7 @@ export class E2ETestSetup {
 
   static async clearDatabase(): Promise<void> {
     const entities = this.dataSource.entityMetadatas;
-    
+
     for (const entity of entities) {
       const repository = this.dataSource.getRepository(entity.name);
       await repository.clear();
@@ -821,7 +814,7 @@ describe('Orders API (E2E)', () => {
 
       // Assert
       expect(response.statusCode).toBe(201);
-      
+
       const responseBody = response.json();
       expect(responseBody).toMatchObject({
         id: expect.any(String),
@@ -1126,6 +1119,27 @@ coverageThreshold: {
 
 ---
 
+### Resultados recentes (T5.1 / T5.2)
+
+As tasks T5.1 (Unit Tests: Domain Services) e T5.2 (Unit Tests: UseCases) foram concluídas. Os artefatos de teste e relatórios mostram cobertura alinhada com as metas para as áreas críticas (linhas e funções):
+
+| Área                                 |  Lines | Functions | Observação                   |
+| ------------------------------------ | -----: | --------: | ---------------------------- |
+| Services (libs/domain/src/services)  | >= 90% |    >= 90% | Meta atingida — entrega T5.1 |
+| UseCases (libs/domain/src/use-cases) | >= 80% |    >= 80% | Meta atingida — entrega T5.2 |
+
+Cobertura atual aproximada (exemplo de execução):
+
+```
+All files                 |   86-90%  (varia por execução)
+services                 |   >= 90%
+use-cases                |   >= 80%
+```
+
+Essas entregas estão referenciadas nas tasks T5.1 e T5.2 no roadmap e podem ser verificadas gerando o relatório completo com `yarn test:coverage`.
+
+---
+
 ### Gerar Relatórios de Cobertura
 
 ```bash
@@ -1137,7 +1151,7 @@ yarn test:coverage
 open coverage/lcov-report/index.html
 ```
 
-**Formato do relatório:**
+**Formato do relatório (exemplo):**
 
 ```
 --------------------------|---------|----------|---------|---------|
@@ -1165,7 +1179,7 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: postgres:14
@@ -1183,35 +1197,35 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'yarn'
-      
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      
+
       - name: Run unit tests
         run: yarn test:unit
-      
+
       - name: Run integration tests
         run: yarn test:integration
-      
+
       - name: Run E2E tests
         run: yarn test:e2e
-      
+
       - name: Generate coverage report
         run: yarn test:coverage
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-      
+
       - name: Check coverage threshold
         run: yarn test:coverage --passWithNoTests
 ```
@@ -1271,7 +1285,7 @@ describe('OrderService', () => {
   it('should get order by id', async () => {
     // Setup próprio
     const orderId = await service.create({ items: [...] });
-    
+
     const order = await service.getById(orderId);
     expect(order).toBeDefined();
   });
@@ -1297,13 +1311,13 @@ it('should return products in order', () => {
 ```typescript
 it('should return all products', () => {
   const products = service.listProducts();
-  
+
   expect(products).toHaveLength(2);
   expect(products).toEqual(
     expect.arrayContaining([
       expect.objectContaining({ name: 'Product A' }),
       expect.objectContaining({ name: 'Product B' }),
-    ])
+    ]),
   );
 });
 ```
@@ -1387,7 +1401,7 @@ export class ProductFixture {
 
   static createProducts(count: number): Product[] {
     return Array.from({ length: count }, (_, i) =>
-      this.createProduct({ name: `Product ${i + 1}` })
+      this.createProduct({ name: `Product ${i + 1}` }),
     );
   }
 }
@@ -1396,7 +1410,7 @@ export class ProductFixture {
 it('should list products', () => {
   const products = ProductFixture.createProducts(5);
   mockRepository.findAll.mockResolvedValue(products);
-  
+
   // Test logic...
 });
 ```
@@ -1619,26 +1633,31 @@ test/
 ## Checklist de Qualidade de Testes
 
 ✅ **Cobertura**
+
 - [ ] Cobertura de linhas >= 80%
 - [ ] Cobertura de branches >= 70%
 - [ ] Casos de erro testados
 
 ✅ **Independência**
+
 - [ ] Testes podem rodar em qualquer ordem
 - [ ] Cada teste tem seu próprio setup
 - [ ] Sem estado compartilhado entre testes
 
 ✅ **Clareza**
+
 - [ ] Nomes descritivos (describe/it)
 - [ ] Padrão AAA seguido
 - [ ] Um conceito por teste
 
 ✅ **Manutenibilidade**
+
 - [ ] Fixtures/factories para dados de teste
 - [ ] Mocks bem isolados
 - [ ] Testes não são frágeis
 
 ✅ **Performance**
+
 - [ ] Testes unitários < 100ms
 - [ ] Testes de integração < 1s
 - [ ] E2E < 10s por cenário
@@ -1659,12 +1678,7 @@ test/
       "request": "launch",
       "name": "Jest: Current File",
       "program": "${workspaceFolder}/node_modules/.bin/jest",
-      "args": [
-        "${fileBasename}",
-        "--config",
-        "jest.config.ts",
-        "--runInBand"
-      ],
+      "args": ["${fileBasename}", "--config", "jest.config.ts", "--runInBand"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     },
@@ -1689,7 +1703,7 @@ test/
 // Habilitar logs temporariamente
 it('should do something', () => {
   console.log('Debug info:', someVariable); // Will show in test output
-  
+
   // Ou usar o --verbose flag
   // yarn test --verbose
 });

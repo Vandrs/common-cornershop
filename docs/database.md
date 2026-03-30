@@ -260,9 +260,11 @@ Seeds populam o banco com dados iniciais para desenvolvimento e testes.
 
 ```
 apps/api/src/database/seeds/
-├── index.ts
-├── category.seed.ts
-└── product.seed.ts
+├── index.ts                # runSeeds / orchestration (T3.3)
+├── category.seed.ts        # idempotent category seed (5 categories) (T3.3)
+├── product.seed.ts         # idempotent product seed (8+ products) (T3.3)
+├── stock.seed.ts           # idempotent stock seed (associa estoque aos produtos) (T3.3)
+└── run-seeds.ts            # entrypoint executado pelo script `yarn seed` (T3.3)
 ```
 
 ---
@@ -322,6 +324,8 @@ export async function seedCategories(dataSource: DataSource): Promise<void> {
   console.log('✅ Categories seeded successfully');
 }
 ```
+
+> Observação: a seed de categorias criada em T3.3 insere 5 categorias (Bebidas, Snacks, Laticínios, Higiene, Mercearia) e é idempotente — ela checa existência por nome antes de inserir.
 
 ---
 
@@ -416,6 +420,8 @@ export async function seedProducts(dataSource: DataSource): Promise<void> {
 }
 ```
 
+> Observação: a task T3.3 adicionou +8 produtos de exemplo cobrindo múltiplas categorias; cada produto acompanha dados de estoque (quantidade e mínimo) e as seeds são idempotentes.
+
 ---
 
 ### Arquivo Index dos Seeds
@@ -454,6 +460,8 @@ yarn seed
 yarn seed:categories
 yarn seed:products
 ```
+
+> Nota: o script `yarn seed` e o entrypoint `run-seeds.ts` foram adicionados como parte da task T3.3. As seeds foram implementadas para serem seguras em reexecuções (idempotência) e podem ser usadas em ambientes de desenvolvimento.
 
 ---
 
