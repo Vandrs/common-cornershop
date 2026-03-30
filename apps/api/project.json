@@ -12,6 +12,7 @@
       "options": {
         "outputPath": "dist/apps/api",
         "main": "apps/api/src/main.ts",
+        "rootDir": ".",
         "tsConfig": "apps/api/tsconfig.json",
         "assets": []
       }
