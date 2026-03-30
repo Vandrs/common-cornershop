@@ -253,6 +253,7 @@ gantt
 - T3.1: entregue nesta branch: `feat/T3.1-typeorm-datasource`.
 - T3.3: Seeds idempotentes implementadas em `apps/api/src/database/seeds/` com entrypoint `run-seeds.ts` e script `yarn seed` (ver detalhe em docs/database.md). ✅ Concluído.
 - T4.1: Fastify bootstrap e container DI entregues na branch `feat/T4.1-fastify-bootstrap` — inclui `main.ts`, `app.ts`, `apps/api/src/container/dependency-injection.ts`, `apps/api/src/plugins/error-handler.plugin.ts`, e stubs de `repositories/*.impl.ts`. ✅ Concluído.
+- T4.2: Zod HTTP schemas implementados e registrados — arquivos em `apps/api/src/http/schemas/` (categories/products/orders + shared), plugin de registro em `apps/api/src/plugins/http-schemas.plugin.ts`, Swagger plugin em `apps/api/src/plugins/swagger.plugin.ts`, e bootstrap wiring em `apps/api/src/app.ts` que registra ambos. Testes de schemas em `apps/api/src/http/schemas/__tests__/schemas.spec.ts`. ✅ Concluído.
 - T2.5: entregue na branch `feat/T2.5-order-usecases` — OrderService, InvalidOrderStatusTransitionError e 5 UseCases (Create, Get, List, UpdateStatus, Cancel) com 37 novos testes unitários.
 - T3.2: entregue na branch `feat/T3.2-database-migrations` — 5 migrations TypeORM (categories → products → stocks → orders → order_items) com FKs, índices e check constraints.
 - T5.1 / T5.2: Unit tests para Services e UseCases implementados e com cobertura alinhada às metas (ver docs/testing.md). ✅ Concluído.
@@ -261,6 +262,7 @@ Nota de status geral:
 
 - Fase 2 (Core Domain & DB) está agora marcada como CONCLUÍDA — inclui migrations (T3.2) e seeds idempotentes (T3.3).
 - Fase 3 (API Layer) está EM ANDAMENTO: o bootstrap Fastify + DI + error handler foi entregue (T4.1) e repositórios parciais (stubs) estão no repositório; controllers e rotas seguem em T4.4+.
+- Fase 3 (API Layer) está EM ANDAMENTO: o bootstrap Fastify + DI + error handler foi entregue (T4.1) e repositórios parciais (stubs) estão no repositório; controllers e rotas seguem em T4.4+. Completamos T4.2 (HTTP schema layer + Swagger) — os próximos passos são mapear controllers para usar os novos schemas e adicionar integração/contract tests.
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -271,7 +273,7 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | ID   | Issue |                                                          Título | Estimativa | Prioridade | Status          | Link                                                         |
 | ---- | ----- | --------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
 | T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ✅ Concluído    | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
-| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | Em andamento    | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
+| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | ✅ Concluída    | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
 | T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | Em andamento    | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
 | T4.4 | #15   |                         Infra API — Category Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#15](https://github.com/Vandrs/common-cornershop/issues/15) |
 | T4.5 | #16   |                          Infra API — Product Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#16](https://github.com/Vandrs/common-cornershop/issues/16) |
