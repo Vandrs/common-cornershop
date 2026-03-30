@@ -190,7 +190,7 @@ flowchart TD
 graph TB
     subgraph "Presentation Layer"
         C[Controllers]
-        S[Schemas Zod]
+    S[Schemas Zod]
         M[Middlewares]
     end
 
@@ -228,7 +228,7 @@ graph TB
     style DB fill:#ffeaa7
 ```
 
-> Nota: o Swagger Plugin (responsável por expor a UI em `/docs` e os specs JSON/YAML) faz parte da "Presentation Layer" e consome os Zod schemas para gerar a documentação interativa.
+> Nota: a task T4.2 adicionou um "HTTP schema layer" implementado com Zod em `apps/api/src/http/schemas/` e um plugin de registro `apps/api/src/plugins/http-schemas.plugin.ts` que converte os Zod schemas em JSON Schema (`zod-to-json-schema`) e os registra no Fastify via `app.addSchema()`. O Swagger plugin (`apps/api/src/plugins/swagger.plugin.ts`) é registrado no bootstrap e expõe a UI em `/docs`.
 
 ---
 

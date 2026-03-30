@@ -680,6 +680,28 @@ describe('ProductController (Integration)', () => {
 
 ---
 
+### Nota sobre testes de schemas HTTP
+
+Os HTTP schemas (Zod) do diretório `apps/api/src/http/schemas/` possuem testes unitários que validam parsing/transformações e integração com o error handler. Esses testes ficam em `apps/api/src/http/schemas/__tests__/schemas.spec.ts` e são um bom exemplo para escrever novos casos de teste que verifiquem:
+
+- Transformações implícitas (ex: query strings para number/boolean).
+- Rejeição de inputs inválidos com mensagens esperadas.
+- Comportamento conjunto com o error handler (formato do envelope de erro).
+
+Inclua um caso similar em PRs que alterem schemas para evitar regressões.
+
+### Testando HTTP Schemas (Zod)
+
+Há testes unitários para os HTTP schemas localizados em `apps/api/src/http/schemas/__tests__/schemas.spec.ts`. Esses testes exercitam parsing/transformações (ex: query params -> typed values) e integração com o error handler para garantir que erros de validação retornem o envelope de erro esperado.
+
+Recomendações de teste:
+
+- Cobrir transformações de query params (strings -> numbers/booleans) presentes nos schemas.
+- Testar mensagens e formatos esperados do error handler quando Zod falha (ex: UUID inválido em params).
+- Executar `app.inject()` com rotas de teste simples que usam os schemas para validar integração com o error handler.
+
+---
+
 ## Testes E2E (End-to-End)
 
 ### Setup de Ambiente Isolado

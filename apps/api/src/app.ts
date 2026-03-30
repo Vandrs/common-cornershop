@@ -4,6 +4,8 @@ import Fastify, { FastifyInstance } from 'fastify';
 
 import { registerDependencies } from './container/dependency-injection';
 import { registerErrorHandler } from './plugins/error-handler.plugin';
+import { registerHttpSchemas } from './plugins/http-schemas.plugin';
+import { registerSwagger } from './plugins/swagger.plugin';
 
 /**
  * Factory function that builds and configures the Fastify application.
@@ -32,6 +34,9 @@ export async function createApp(): Promise<FastifyInstance> {
 
   // Register the centralised error handler (ADR-0002).
   registerErrorHandler(app);
+
+  await registerSwagger(app);
+  await registerHttpSchemas(app);
 
   return app;
 }

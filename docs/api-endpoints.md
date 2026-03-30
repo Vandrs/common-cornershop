@@ -3,7 +3,7 @@
 **Base URL**: `http://localhost:3000/api`
 
 > 💡 **Documentação Interativa**: Com o servidor rodando, acesse a UI do Swagger em [`http://localhost:3000/docs`](http://localhost:3000/docs).  
-> Para detalhes de configuração, veja [docs/openapi.md](openapi.md).
+> Os schemas usados pela documentação são definidos com Zod em `apps/api/src/http/schemas/` e registrados automaticamente no bootstrap. Para detalhes de configuração e como os Zod schemas são expostos, veja [docs/openapi.md](openapi.md).
 
 ---
 
@@ -126,7 +126,7 @@ Lista produtos com paginação e filtros.
       "id": "323e4567-e89b-12d3-a456-426614174002",
       "name": "Coca-Cola 2L",
       "description": "Refrigerante de cola",
-      "price": 8.50,
+      "price": 8.5,
       "categoryId": "123e4567-e89b-12d3-a456-426614174000",
       "category": {
         "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -140,7 +140,7 @@ Lista produtos com paginação e filtros.
       "id": "423e4567-e89b-12d3-a456-426614174003",
       "name": "Guaraná Antarctica 2L",
       "description": "Refrigerante de guaraná",
-      "price": 7.50,
+      "price": 7.5,
       "categoryId": "123e4567-e89b-12d3-a456-426614174000",
       "category": {
         "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -191,7 +191,7 @@ Retorna um produto específico com informações de estoque.
   "id": "323e4567-e89b-12d3-a456-426614174002",
   "name": "Coca-Cola 2L",
   "description": "Refrigerante de cola",
-  "price": 8.50,
+  "price": 8.5,
   "categoryId": "123e4567-e89b-12d3-a456-426614174000",
   "category": {
     "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -250,7 +250,7 @@ Cria um novo pedido.
   "id": "623e4567-e89b-12d3-a456-426614174005",
   "orderNumber": "ORD-1710501234567-A3F9",
   "status": "PENDING",
-  "totalAmount": 24.50,
+  "totalAmount": 24.5,
   "items": [
     {
       "id": "723e4567-e89b-12d3-a456-426614174006",
@@ -258,11 +258,11 @@ Cria um novo pedido.
       "product": {
         "id": "323e4567-e89b-12d3-a456-426614174002",
         "name": "Coca-Cola 2L",
-        "price": 8.50
+        "price": 8.5
       },
       "quantity": 2,
-      "unitPrice": 8.50,
-      "subtotal": 17.00
+      "unitPrice": 8.5,
+      "subtotal": 17.0
     },
     {
       "id": "823e4567-e89b-12d3-a456-426614174007",
@@ -270,11 +270,11 @@ Cria um novo pedido.
       "product": {
         "id": "423e4567-e89b-12d3-a456-426614174003",
         "name": "Guaraná Antarctica 2L",
-        "price": 7.50
+        "price": 7.5
       },
       "quantity": 1,
-      "unitPrice": 7.50,
-      "subtotal": 7.50
+      "unitPrice": 7.5,
+      "subtotal": 7.5
     }
   ],
   "createdAt": "2026-03-15T15:00:00Z",
@@ -332,7 +332,7 @@ Retorna um pedido completo com todos os items.
   "id": "623e4567-e89b-12d3-a456-426614174005",
   "orderNumber": "ORD-1710501234567-A3F9",
   "status": "PROCESSING",
-  "totalAmount": 24.50,
+  "totalAmount": 24.5,
   "items": [
     {
       "id": "723e4567-e89b-12d3-a456-426614174006",
@@ -342,8 +342,8 @@ Retorna um pedido completo com todos os items.
         "name": "Coca-Cola 2L"
       },
       "quantity": 2,
-      "unitPrice": 8.50,
-      "subtotal": 17.00
+      "unitPrice": 8.5,
+      "subtotal": 17.0
     },
     {
       "id": "823e4567-e89b-12d3-a456-426614174007",
@@ -353,8 +353,8 @@ Retorna um pedido completo com todos os items.
         "name": "Guaraná Antarctica 2L"
       },
       "quantity": 1,
-      "unitPrice": 7.50,
-      "subtotal": 7.50
+      "unitPrice": 7.5,
+      "subtotal": 7.5
     }
   ],
   "createdAt": "2026-03-15T15:00:00Z",
@@ -425,7 +425,7 @@ Lista pedidos com paginação e filtros.
       "id": "623e4567-e89b-12d3-a456-426614174005",
       "orderNumber": "ORD-1710501234567-A3F9",
       "status": "COMPLETED",
-      "totalAmount": 24.50,
+      "totalAmount": 24.5,
       "itemsCount": 2,
       "createdAt": "2026-03-15T15:00:00Z",
       "updatedAt": "2026-03-15T16:00:00Z"
@@ -434,7 +434,7 @@ Lista pedidos com paginação e filtros.
       "id": "923e4567-e89b-12d3-a456-426614174008",
       "orderNumber": "ORD-1710501298765-B7K2",
       "status": "PENDING",
-      "totalAmount": 15.00,
+      "totalAmount": 15.0,
       "itemsCount": 1,
       "createdAt": "2026-03-15T15:30:00Z",
       "updatedAt": "2026-03-15T15:30:00Z"
@@ -503,12 +503,12 @@ Formato padrão de erros:
 
 ### Status Codes
 
-| Code | Descrição |
-|------|-----------|
-| `200` | Success - GET |
-| `201` | Created - POST |
-| `400` | Bad Request - Validação falhou |
-| `404` | Not Found - Recurso não encontrado |
+| Code  | Descrição                                |
+| ----- | ---------------------------------------- |
+| `200` | Success - GET                            |
+| `201` | Created - POST                           |
+| `400` | Bad Request - Validação falhou           |
+| `404` | Not Found - Recurso não encontrado       |
 | `500` | Internal Server Error - Erro no servidor |
 
 ---

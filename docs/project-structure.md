@@ -194,20 +194,25 @@ Recebem requests HTTP, validam input e delegam para UseCases.
 // order.controller.ts    - Gestão de pedidos
 ```
 
-    Nota: a implementação parcial atual entrega o bootstrap da API (T4.1). Os arquivos abaixo já existem em `apps/api/src/`: `main.ts`, `app.ts`, `container/dependency-injection.ts`, `plugins/error-handler.plugin.ts` e stubs em `repositories/*.impl.ts`. Os diretórios `controllers/` e `schemas/` ainda serão preenchidos em T4.4+.
+    Nota: a implementação parcial atual entrega o bootstrap da API (T4.1). Os arquivos abaixo já existem em `apps/api/src/`: `main.ts`, `app.ts`, `container/dependency-injection.ts`, `plugins/error-handler.plugin.ts` e stubs em `repositories/*.impl.ts`.
+
+    Observação: a task T4.2 implementou um HTTP schema layer usando Zod em `apps/api/src/http/schemas/` (ex: `categories.schema.ts`, `products.schema.ts`, `orders.schema.ts`, `index.ts`) e adicionou testes unitários em `apps/api/src/http/schemas/__tests__/schemas.spec.ts`. Os schemas são registrados no Fastify por `apps/api/src/plugins/http-schemas.plugin.ts`. Controllers REST ainda seguem em T4.4+.
 
     Além disso, a task T3.3 adicionou seeds idempotentes sob `apps/api/src/database/seeds/` e o script `yarn seed` foi registrado para popular dados de desenvolvimento (ver docs/database.md).
 
-##### 2. `schemas/`
+##### 2. `http/schemas/`
 
-Schemas Zod para validação de requests.
+Camada HTTP de validação (Zod) localizada em `apps/api/src/http/schemas/`. Contém os schemas usados pelas rotas (body, params, query, responses) e um `index.ts` que reexporta os componentes.
 
 ```typescript
-// category.schema.ts   - Schemas de categoria
-// product.schema.ts    - Schemas de produto
-// order.schema.ts      - Schemas de pedido
-// pagination.schema.ts - Schema de paginação
+// apps/api/src/http/schemas/index.ts                - Barrel export dos schemas HTTP
+// apps/api/src/http/schemas/categories.schema.ts    - Schemas de categoria (query/params/response)
+// apps/api/src/http/schemas/products.schema.ts      - Schemas de produto
+// apps/api/src/http/schemas/orders.schema.ts        - Schemas de pedido
+// apps/api/src/http/schemas/shared/*.schema.ts      - Reutilizáveis (uuid, money, pagination)
 ```
+
+Há testes de unidade para os schemas em `apps/api/src/http/schemas/__tests__/schemas.spec.ts`.
 
 ##### 3. `repositories/`
 
