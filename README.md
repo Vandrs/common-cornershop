@@ -69,21 +69,22 @@ Leia [docs/conventions.md](docs/conventions.md) antes de abrir um PR.
 
 ### 📚 Documentação
 
-| Documento                                                                             | O que você encontra                                                                       |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [project-structure.md](docs/project-structure.md)                                     | Árvore completa do monorepo com o papel de cada diretório e sufixo de arquivo.            |
-| [architecture.md](docs/architecture.md)                                               | Responsabilidades de cada camada, fluxo de dependências e padrões de DI com TSyringe.     |
-| [conventions.md](docs/conventions.md)                                                 | Nomenclatura, organização de imports, padrão de commits e regras de estilo de código.     |
-| [domain-model.md](docs/domain-model.md)                                               | Diagrama ER e descrição das entidades: Category, Product, Stock, Order, OrderItem.        |
-| [error-handling.md](docs/error-handling.md)                                           | Contrato de erros, envelope JSON, hierarquia de DomainError e como adicionar novos erros. |
-| [testing.md](docs/testing.md)                                                         | Setup do Jest, padrão AAA, mocks, thresholds de cobertura e exemplos de testes.           |
-| [api-endpoints.md](docs/api-endpoints.md)                                             | Referência completa de todos os endpoints: request, response, status codes e erros.       |
-| [database.md](docs/database.md)                                                       | Uso do TypeORM CLI, migrations, seeds e configuração do banco de teste.                   |
-| [openapi.md](docs/openapi.md)                                                         | Integração do Swagger com os schemas Zod existentes e convenções de metadados.            |
-| [examples.md](docs/examples.md)                                                       | Fluxos completos de ponta a ponta mostrando a interação entre todas as camadas.           |
-| [roadmap.md](docs/roadmap.md)                                                         | Fases do MVP, breakdown de tasks, dependências e critérios de conclusão.                  |
-| [adr/0001-idioma-mensagens-de-erro.md](docs/adr/0001-idioma-mensagens-de-erro.md)     | Decisão: código em inglês, campo `message` das respostas em pt-BR.                        |
-| [adr/0002-error-handler-centralizado.md](docs/adr/0002-error-handler-centralizado.md) | Decisão: único `setErrorHandler` global no bootstrap da aplicação.                        |
+| Documento                                                                                 | O que você encontra                                                                       |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [project-structure.md](docs/project-structure.md)                                         | Árvore completa do monorepo com o papel de cada diretório e sufixo de arquivo.            |
+| [architecture.md](docs/architecture.md)                                                   | Responsabilidades de cada camada, fluxo de dependências e padrões de DI com TSyringe.     |
+| [conventions.md](docs/conventions.md)                                                     | Nomenclatura, organização de imports, padrão de commits e regras de estilo de código.     |
+| [domain-model.md](docs/domain-model.md)                                                   | Diagrama ER e descrição das entidades: Category, Product, Stock, Order, OrderItem.        |
+| [error-handling.md](docs/error-handling.md)                                               | Contrato de erros, envelope JSON, hierarquia de DomainError e como adicionar novos erros. |
+| [testing.md](docs/testing.md)                                                             | Setup do Jest, padrão AAA, mocks, thresholds de cobertura e exemplos de testes.           |
+| [api-endpoints.md](docs/api-endpoints.md)                                                 | Referência completa de todos os endpoints: request, response, status codes e erros.       |
+| [database.md](docs/database.md)                                                           | Uso do TypeORM CLI, migrations, seeds e configuração do banco de teste.                   |
+| [openapi.md](docs/openapi.md)                                                             | Integração do Swagger com os schemas Zod existentes e convenções de metadados.            |
+| [examples.md](docs/examples.md)                                                           | Fluxos completos de ponta a ponta mostrando a interação entre todas as camadas.           |
+| [roadmap.md](docs/roadmap.md)                                                             | Fases do MVP, breakdown de tasks, dependências e critérios de conclusão.                  |
+| [adr/0001-idioma-mensagens-de-erro.md](docs/adr/0001-idioma-mensagens-de-erro.md)         | Decisão: código em inglês, campo `message` das respostas em pt-BR.                        |
+| [adr/0002-error-handler-centralizado.md](docs/adr/0002-error-handler-centralizado.md)     | Decisão: único `setErrorHandler` global no bootstrap da aplicação.                        |
+| [adr/0003-soft-delete-order-orderitems.md](docs/adr/0003-soft-delete-order-orderitems.md) | Decisão: soft-delete de Order NÃO faz cascade soft-delete em OrderItems.                  |
 
 ---
 
