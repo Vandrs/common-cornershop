@@ -112,6 +112,10 @@ Decision record: all code in English; user-facing `message` fields in pt-BR. Def
 
 Decision record: single global `fastify.setErrorHandler` registered at bootstrap (`apps/api/src/plugins/error-handler.plugin.ts`). Prohibits scattered per-route error handling and defines the three classification categories the handler must cover.
 
+### [`docs/adr/0003-soft-delete-order-orderitems.md`](docs/adr/0003-soft-delete-order-orderitems.md)
+
+Decision record: soft-delete de uma Order NÃO aplica cascade soft-delete em OrderItems; responsabilidades de filtragem operacional ficam com repositórios/serviços/read-models.
+
 ## Real Domain Structure (as implemented)
 
 The actual directory layout in `libs/domain/src/` is **flat by type**, not nested by module:
