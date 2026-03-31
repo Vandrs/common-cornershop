@@ -98,6 +98,12 @@ End-to-end walkthroughs of complete request flows (e.g. creating an order) showi
 
 Implementation roadmap for the MVP: phases, task breakdown, dependencies between tasks, and done criteria. Consult to understand what has been prioritized and in what order work should proceed.
 
+### Roadmap ↔ Board sync policy
+
+For synchronization rules between `docs/roadmap.md` and the GitHub Project board, follow **only** `CONTRIBUTING.md` → `Roadmap ↔ Board Sync Policy`.
+
+If roadmap and board conflict and the correct state is unclear, escalate to **maintainer-review**.
+
 ### [`docs/adr/0001-idioma-mensagens-de-erro.md`](docs/adr/0001-idioma-mensagens-de-erro.md)
 
 Decision record: all code in English; user-facing `message` fields in pt-BR. Defines where to centralize error message strings (`libs/shared/src/errors/messages/`) and the future i18n migration path.
