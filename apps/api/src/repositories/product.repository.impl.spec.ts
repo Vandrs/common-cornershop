@@ -11,14 +11,22 @@ import { DataSource, Repository } from 'typeorm';
 
 import { ProductRepositoryImpl } from './product.repository.impl';
 
-const getRequiredTestEnv = (name: string): string => {
-  const value = process.env[name];
-
-  if (!value || value.trim().length === 0) {
-    throw new Error(`${name} is required for ProductRepositoryImpl integration tests`);
+const getRequiredTestEnv = (primaryName: string, fallbackName?: string): string => {
+  const primaryValue = process.env[primaryName];
+  if (primaryValue && primaryValue.trim().length > 0) {
+    return primaryValue;
   }
 
-  return value;
+  if (fallbackName) {
+    const fallbackValue = process.env[fallbackName];
+    if (fallbackValue && fallbackValue.trim().length > 0) {
+      return fallbackValue;
+    }
+  }
+
+  throw new Error(
+    `${primaryName}${fallbackName ? ` (or ${fallbackName})` : ''} is required for ProductRepositoryImpl integration tests`,
+  );
 };
 
 describe('ProductRepositoryImpl (integration)', () => {
@@ -27,11 +35,11 @@ describe('ProductRepositoryImpl (integration)', () => {
   let productOrmRepository: Repository<Product>;
   let repository: ProductRepositoryImpl;
 
-  const dbHost = getRequiredTestEnv('TEST_DB_HOST');
-  const dbPort = Number(getRequiredTestEnv('TEST_DB_PORT'));
-  const dbUser = getRequiredTestEnv('TEST_DB_USER');
-  const dbPassword = getRequiredTestEnv('TEST_DB_PASSWORD');
-  const dbName = getRequiredTestEnv('TEST_DB_NAME');
+  const dbHost = getRequiredTestEnv('DB_HOST', 'TEST_DB_HOST');
+  const dbPort = Number(getRequiredTestEnv('DB_PORT', 'TEST_DB_PORT'));
+  const dbUser = getRequiredTestEnv('DB_USER', 'TEST_DB_USER');
+  const dbPassword = getRequiredTestEnv('DB_PASSWORD', 'TEST_DB_PASSWORD');
+  const dbName = getRequiredTestEnv('DB_NAME', 'TEST_DB_NAME');
 
   beforeAll(async () => {
     dataSource = new DataSource({
@@ -44,6 +52,7 @@ describe('ProductRepositoryImpl (integration)', () => {
       entities: [Category, Product, Stock, Order, OrderItem],
       synchronize: true,
       dropSchema: true,
+      logging: false,
     });
 
     await dataSource.initialize();
@@ -199,6 +208,12 @@ describe('ProductRepositoryImpl (integration)', () => {
 
       expect(result).toBeNull();
     });
+
+    it('should return null when product does not exist', async () => {
+      const result = await repository.findById(randomUUID());
+
+      expect(result).toBeNull();
+    });
   });
 
   describe('findByIds', () => {
@@ -283,6 +298,9 @@ describe('ProductRepositoryImpl (integration)', () => {
 
       expect(deleted).not.toBeNull();
       expect(deleted?.deletedAt).toBeInstanceOf(Date);
+
+      const activeRecord = await repository.findById(product.id);
+      expect(activeRecord).toBeNull();
     });
   });
 });
