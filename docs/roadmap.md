@@ -1,7 +1,7 @@
 # Roadmap — Common Cornershop 📍
 
 Data de criação: 2026-03-25
-Última atualização: 2026-03-31
+Última atualização: 2026-04-01
 
 GitHub Project: https://github.com/users/Vandrs/projects/2
 
@@ -33,7 +33,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase 1 — Fundação         | Semana 1         | ✅ Concluída |
 | Fase 2 — Core Domain & DB | Semana 1–2       | ✅ Concluída |
 | Fase 3 — API Layer        | Semana 2–3       | Em andamento |
-| Fase 4 — Quality          | Semana 3–4       | Não iniciado |
+| Fase 4 — Quality          | Semana 3–4       | Em andamento |
 | Fase 5 — DevOps Final     | Semana 4         | Não iniciado |
 
 ---
@@ -274,7 +274,7 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | ---- | ----- | --------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
 | T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ✅ Concluído    | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
 | T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | ✅ Concluída    | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
-| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | ⬜ Não iniciado | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
+| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | ✅ Concluído    | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
 | T4.4 | #15   |                         Infra API — Category Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#15](https://github.com/Vandrs/common-cornershop/issues/15) |
 | T4.5 | #16   |                          Infra API — Product Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#16](https://github.com/Vandrs/common-cornershop/issues/16) |
 | T4.6 | #17   |                            Infra API — Order Controller e Rotas |         3h | Média      | ⬜ Não iniciado | [#17](https://github.com/Vandrs/common-cornershop/issues/17) |
