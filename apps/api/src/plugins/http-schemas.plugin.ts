@@ -24,6 +24,7 @@ import {
   productNotFoundResponseSchema,
   productNotFoundByIdResponseSchema,
   productParamsSchema,
+  updateOrderStatusBodySchema,
   validationErrorResponseSchema,
 } from '../http/schemas';
 
@@ -49,6 +50,7 @@ const SCHEMA_REGISTRY: RegisteredZodSchema[] = [
   { id: 'OrdersCreateBody', schema: createOrderBodySchema },
   { id: 'OrdersParams', schema: orderParamsSchema },
   { id: 'OrdersListQuery', schema: listOrdersQuerySchema },
+  { id: 'OrdersUpdateStatusBody', schema: updateOrderStatusBodySchema },
   { id: 'OrdersCreateResponse', schema: createOrderResponseSchema },
   { id: 'OrderResponse', schema: getOrderResponseSchema },
   { id: 'OrderStatusResponse', schema: getOrderStatusResponseSchema },
