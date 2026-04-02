@@ -1,7 +1,7 @@
 # Roadmap — Common Cornershop 📍
 
 Data de criação: 2026-03-25
-Última atualização: 2026-04-01
+Última atualização: 2026-04-02
 
 GitHub Project: https://github.com/users/Vandrs/projects/2
 
@@ -32,7 +32,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | ------------------------- | ---------------- | ------------ |
 | Fase 1 — Fundação         | Semana 1         | ✅ Concluída |
 | Fase 2 — Core Domain & DB | Semana 1–2       | ✅ Concluída |
-| Fase 3 — API Layer        | Semana 2–3       | Em andamento |
+| Fase 3 — API Layer        | Semana 2–3       | ✅ Concluída |
 | Fase 4 — Quality          | Semana 3–4       | Em andamento |
 | Fase 5 — DevOps Final     | Semana 4         | Não iniciado |
 
@@ -258,11 +258,16 @@ gantt
 - T3.2: entregue na branch `feat/T3.2-database-migrations` — 5 migrations TypeORM (categories → products → stocks → orders → order_items) com FKs, índices e check constraints.
 - T5.1 / T5.2: Unit tests para Services e UseCases implementados e com cobertura alinhada às metas (ver docs/testing.md). ✅ Concluído.
 
+- T4.4: entregue e mergeado (PR #58). ✅ Concluído.
+- T4.5: entregue e mergeado (PR #59). ✅ Concluído.
+- T4.6: entregue e mergeado (PR #60). ✅ Concluído.
+- T5.3: integration tests dos repositórios entregues (PR #57). ✅ Concluído.
+
 Nota de status geral:
 
 - Fase 2 (Core Domain & DB) está agora marcada como CONCLUÍDA — inclui migrations (T3.2) e seeds idempotentes (T3.3).
-- Fase 3 (API Layer) está EM ANDAMENTO: o bootstrap Fastify + DI + error handler foi entregue (T4.1) e repositórios parciais (stubs) estão no repositório; controllers e rotas seguem em T4.4+.
-- Fase 3 (API Layer) está EM ANDAMENTO: o bootstrap Fastify + DI + error handler foi entregue (T4.1) e repositórios parciais (stubs) estão no repositório; controllers e rotas seguem em T4.4+. Completamos T4.2 (HTTP schema layer + Swagger) — os próximos passos são mapear controllers para usar os novos schemas e adicionar integração/contract tests.
+- Fase 3 (API Layer) está agora marcada como CONCLUÍDA — T4.1..T4.6 foram entregues (controllers e rotas incluídos). Completamos também a camada de schemas (T4.2) e as implementações de repositório (T4.3).
+- Fase 4 (Quality) permanece em andamento: T5.1,T5.2,T5.3 concluídas; T5.4 e T5.5 ainda não iniciadas.
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -270,14 +275,14 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 
 - Objetivo: expor use cases via Fastify, validação Zod e implementar repositórios TypeORM.
 
-| ID   | Issue |                                                          Título | Estimativa | Prioridade | Status          | Link                                                         |
-| ---- | ----- | --------------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ✅ Concluído    | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
-| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | ✅ Concluída    | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
-| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | ✅ Concluído    | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
-| T4.4 | #15   |                         Infra API — Category Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#15](https://github.com/Vandrs/common-cornershop/issues/15) |
-| T4.5 | #16   |                          Infra API — Product Controller e Rotas |         2h | Média      | ⬜ Não iniciado | [#16](https://github.com/Vandrs/common-cornershop/issues/16) |
-| T4.6 | #17   |                            Infra API — Order Controller e Rotas |         3h | Média      | ⬜ Não iniciado | [#17](https://github.com/Vandrs/common-cornershop/issues/17) |
+| ID   | Issue |                                                          Título | Estimativa | Prioridade | Status       | Link                                                         |
+| ---- | ----- | --------------------------------------------------------------: | ---------: | ---------- | ------------ | ------------------------------------------------------------ |
+| T4.1 | #12   |       Infra API — Fastify App Bootstrap e TSyringe DI Container |         3h | Alta       | ✅ Concluído | [#12](https://github.com/Vandrs/common-cornershop/issues/12) |
+| T4.2 | #13   |                Infra API — Zod Schemas de validação e Paginação |         3h | Alta       | ✅ Concluída | [#13](https://github.com/Vandrs/common-cornershop/issues/13) |
+| T4.3 | #14   | Infra API — Repository Implementations TypeORM (5 repositórios) |         5h | Alta       | ✅ Concluído | [#14](https://github.com/Vandrs/common-cornershop/issues/14) |
+| T4.4 | #15   |                         Infra API — Category Controller e Rotas |         2h | Média      | ✅ Concluído | [#15](https://github.com/Vandrs/common-cornershop/issues/15) |
+| T4.5 | #16   |                          Infra API — Product Controller e Rotas |         2h | Média      | ✅ Concluído | [#16](https://github.com/Vandrs/common-cornershop/issues/16) |
+| T4.6 | #17   |                            Infra API — Order Controller e Rotas |         3h | Média      | ✅ Concluído | [#17](https://github.com/Vandrs/common-cornershop/issues/17) |
 
 - Critério de conclusão: endpoints básicos (categories, products, orders) respondendo com validação e integração com DB.
 
@@ -289,7 +294,7 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | ---- | ----- | ---------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
 | T5.1 | #18   |                       Testes — Unit Tests: Domain Services |         4h | Média      | ✅ Concluído    | [#18](https://github.com/Vandrs/common-cornershop/issues/18) |
 | T5.2 | #19   |                    Testes — Unit Tests: UseCases com mocks |         4h | Média      | ✅ Concluído    | [#19](https://github.com/Vandrs/common-cornershop/issues/19) |
-| T5.3 | #20   |     Testes — Integration Tests: Repository Implementations |         4h | Média      | ⬜ Não iniciado | [#20](https://github.com/Vandrs/common-cornershop/issues/20) |
+| T5.3 | #20   |     Testes — Integration Tests: Repository Implementations |         4h | Média      | ✅ Concluído    | [#20](https://github.com/Vandrs/common-cornershop/issues/20) |
 | T5.4 | #21   | Testes — Integration Tests: Controllers com Fastify inject |         4h | Média      | ⬜ Não iniciado | [#21](https://github.com/Vandrs/common-cornershop/issues/21) |
 | T5.5 | #22   |                   Testes — E2E Tests, Fixtures e Factories |         5h | Baixa      | ⬜ Não iniciado | [#22](https://github.com/Vandrs/common-cornershop/issues/22) |
 
