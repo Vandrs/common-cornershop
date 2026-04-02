@@ -25,6 +25,7 @@ export class ProductRepositoryImpl implements IProductRepository {
 
     const query = this.repository
       .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
       .where('product.deletedAt IS NULL')
       .orderBy('product.createdAt', 'DESC')
       .addOrderBy('product.id', 'ASC');
@@ -72,6 +73,9 @@ export class ProductRepositoryImpl implements IProductRepository {
       where: {
         id,
         deletedAt: IsNull(),
+      },
+      relations: {
+        category: true,
       },
     });
   }
