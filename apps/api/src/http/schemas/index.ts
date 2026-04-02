@@ -27,6 +27,7 @@ export {
   listOrdersResponseSchema,
   orderNotFoundResponseSchema,
   orderParamsSchema,
+  updateOrderStatusBodySchema,
 } from './orders.schema';
 export type {
   CreateOrderBodySchema,
@@ -40,6 +41,7 @@ export type {
   ListOrdersResponseSchema,
   OrderNotFoundResponseSchema,
   OrderParamsSchema,
+  UpdateOrderStatusBodySchema,
 } from './orders.schema';
 
 export {

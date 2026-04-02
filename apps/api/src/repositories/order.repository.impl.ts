@@ -32,6 +32,7 @@ export class OrderRepositoryImpl implements IOrderRepository {
 
     const queryBuilder = this.repository
       .createQueryBuilder('order')
+      .loadRelationCountAndMap('order.itemsCount', 'order.items')
       .where('order.deletedAt IS NULL');
 
     if (params.status) {
