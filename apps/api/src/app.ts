@@ -4,6 +4,7 @@ import Fastify, { FastifyInstance } from 'fastify';
 
 import { registerOrderRoutes } from './http/routes/order.routes';
 import { registerDependencies } from './container/dependency-injection';
+import { registerCategoryRoutes } from './routes/category.routes';
 import { registerErrorHandler } from './plugins/error-handler.plugin';
 import { registerHttpSchemas } from './plugins/http-schemas.plugin';
 import { registerSwagger } from './plugins/swagger.plugin';
@@ -38,6 +39,7 @@ export async function createApp(): Promise<FastifyInstance> {
 
   await registerSwagger(app);
   await registerHttpSchemas(app);
+  await registerCategoryRoutes(app);
   await registerOrderRoutes(app);
 
   return app;
