@@ -102,6 +102,12 @@ export const listOrdersQuerySchema = paginationQueryBaseSchema
 
 export type ListOrdersQuerySchema = z.infer<typeof listOrdersQuerySchema>;
 
+export const updateOrderStatusBodySchema = z.object({
+  status: orderStatusSchema,
+});
+
+export type UpdateOrderStatusBodySchema = z.infer<typeof updateOrderStatusBodySchema>;
+
 export const listOrderItemSchema = z.object({
   id: uuidSchema,
   orderNumber: z.string(),
