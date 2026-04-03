@@ -257,6 +257,7 @@ gantt
 - T2.5: entregue na branch `feat/T2.5-order-usecases` — OrderService, InvalidOrderStatusTransitionError e 5 UseCases (Create, Get, List, UpdateStatus, Cancel) com 37 novos testes unitários.
 - T3.2: entregue na branch `feat/T3.2-database-migrations` — 5 migrations TypeORM (categories → products → stocks → orders → order_items) com FKs, índices e check constraints.
 - T5.1 / T5.2: Unit tests para Services e UseCases implementados e com cobertura alinhada às metas (ver docs/testing.md). ✅ Concluído.
+- T5.5: E2E tests, fixtures e factories foram implementados na branch `feature/T5.5-e2e-tests-fixtures-factories` (commit `afaaea3`). Estes testes estão entregues nesta branch e aguardam merge para entrarem na main. ✅ Entregue (branch)
 
 - T4.4: entregue e mergeado (PR #58). ✅ Concluído.
 - T4.5: entregue e mergeado (PR #59). ✅ Concluído.
@@ -267,7 +268,7 @@ Nota de status geral:
 
 - Fase 2 (Core Domain & DB) está agora marcada como CONCLUÍDA — inclui migrations (T3.2) e seeds idempotentes (T3.3).
 - Fase 3 (API Layer) está agora marcada como CONCLUÍDA — T4.1..T4.6 foram entregues (controllers e rotas incluídos). Completamos também a camada de schemas (T4.2) e as implementações de repositório (T4.3).
-- Fase 4 (Quality) permanece em andamento: T5.1,T5.2,T5.3 concluídas; T5.4 e T5.5 ainda não iniciadas.
+- Fase 4 (Quality) permanece em andamento: T5.1, T5.2, T5.3, T5.4 concluídas; T5.5 entregue na branch `feature/T5.5-e2e-tests-fixtures-factories` (aguardando merge).
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -290,13 +291,13 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 
 - Objetivo: garantir cobertura de testes nas camadas críticas e integrar testes E2E.
 
-| ID   | Issue |                                                     Título | Estimativa | Prioridade | Status          | Link                                                         |
-| ---- | ----- | ---------------------------------------------------------: | ---------: | ---------- | --------------- | ------------------------------------------------------------ |
-| T5.1 | #18   |                       Testes — Unit Tests: Domain Services |         4h | Média      | ✅ Concluído    | [#18](https://github.com/Vandrs/common-cornershop/issues/18) |
-| T5.2 | #19   |                    Testes — Unit Tests: UseCases com mocks |         4h | Média      | ✅ Concluído    | [#19](https://github.com/Vandrs/common-cornershop/issues/19) |
-| T5.3 | #20   |     Testes — Integration Tests: Repository Implementations |         4h | Média      | ✅ Concluído    | [#20](https://github.com/Vandrs/common-cornershop/issues/20) |
-| T5.4 | #21   | Testes — Integration Tests: Controllers com Fastify inject |         4h | Média      | ⬜ Não iniciado | [#21](https://github.com/Vandrs/common-cornershop/issues/21) |
-| T5.5 | #22   |                   Testes — E2E Tests, Fixtures e Factories |         5h | Baixa      | ⬜ Não iniciado | [#22](https://github.com/Vandrs/common-cornershop/issues/22) |
+| ID   | Issue |                                                     Título | Estimativa | Prioridade | Status                                                                              | Link                                                         |
+| ---- | ----- | ---------------------------------------------------------: | ---------: | ---------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| T5.1 | #18   |                       Testes — Unit Tests: Domain Services |         4h | Média      | ✅ Concluído                                                                        | [#18](https://github.com/Vandrs/common-cornershop/issues/18) |
+| T5.2 | #19   |                    Testes — Unit Tests: UseCases com mocks |         4h | Média      | ✅ Concluído                                                                        | [#19](https://github.com/Vandrs/common-cornershop/issues/19) |
+| T5.3 | #20   |     Testes — Integration Tests: Repository Implementations |         4h | Média      | ✅ Concluído                                                                        | [#20](https://github.com/Vandrs/common-cornershop/issues/20) |
+| T5.4 | #21   | Testes — Integration Tests: Controllers com Fastify inject |         4h | Média      | ✅ Concluído (PR #62)                                                               | [#21](https://github.com/Vandrs/common-cornershop/issues/21) |
+| T5.5 | #22   |                   Testes — E2E Tests, Fixtures e Factories |         5h | Baixa      | ✅ Entregue (branch `feature/T5.5-e2e-tests-fixtures-factories` — aguardando merge) | [#22](https://github.com/Vandrs/common-cornershop/issues/22) |
 
 - Critério de conclusão: `yarn test` verde; E2E básicos passando contra docker-compose; cobertura mínima nas services e usecases.
 
