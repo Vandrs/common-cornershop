@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import Fastify, { FastifyInstance } from 'fastify';
 
-import { CategoryNotFoundException } from '../../../../libs/domain/src/errors/category-not-found.error';
+import { CategoryNotFoundException } from '@domain/errors/category-not-found.error';
 
 import { registerErrorHandler } from '../plugins/error-handler.plugin';
 

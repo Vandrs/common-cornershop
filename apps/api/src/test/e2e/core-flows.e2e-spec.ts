@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 
-import { Stock } from '../../../../../libs/domain/src/entities/stock.entity';
+import { Stock } from '@domain/entities/stock.entity';
 
 import { AppDataSource } from '../../database/data-source';
 

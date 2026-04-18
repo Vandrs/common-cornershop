@@ -31,6 +31,7 @@ describe('StockRepositoryImpl (Integration)', () => {
 
   beforeAll(async () => {
     const { StockRepositoryImpl } =
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('./stock.repository.impl') as typeof import('./stock.repository.impl');
 
     dataSource = new DataSource({

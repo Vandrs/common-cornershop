@@ -24,6 +24,7 @@ describe('OrderItemRepositoryImpl (Integration)', () => {
 
   beforeAll(async () => {
     const { OrderItemRepositoryImpl } =
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('./order-item.repository.impl') as typeof import('./order-item.repository.impl');
 
     dataSource = new DataSource({

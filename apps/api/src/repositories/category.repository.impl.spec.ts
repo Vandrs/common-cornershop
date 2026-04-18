@@ -32,6 +32,7 @@ describe('CategoryRepositoryImpl (Integration)', () => {
 
   beforeAll(async () => {
     const { CategoryRepositoryImpl } =
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       require('./category.repository.impl') as typeof import('./category.repository.impl');
 
     dataSource = new DataSource({

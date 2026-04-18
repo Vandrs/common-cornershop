@@ -7,14 +7,14 @@ import { registerDependencies } from '../../container/dependency-injection';
 import { AppDataSource } from '../../database/data-source';
 import { OrderController } from '../../http/controllers/order.controller';
 import { registerErrorHandler } from '../../plugins/error-handler.plugin';
-import { Product } from '../../../../../libs/domain/src/entities/product.entity';
+import { Product } from '@domain/entities/product.entity';
 import {
   CancelOrderUseCase,
   CreateOrderUseCase,
   GetOrderUseCase,
   ListOrdersUseCase,
   UpdateOrderStatusUseCase,
-} from '../../../../../libs/domain/src';
+} from '@domain/index';
 import { CategoryRepositoryImpl } from '../../repositories/category.repository.impl';
 import { OrderItemRepositoryImpl } from '../../repositories/order-item.repository.impl';
 import { OrderRepositoryImpl } from '../../repositories/order.repository.impl';
