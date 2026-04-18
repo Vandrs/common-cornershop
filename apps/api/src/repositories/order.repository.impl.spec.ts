@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 
 import { Category, Order, OrderItem, OrderStatus, Product, Stock } from '@domain/index';
 
-import type { OrderRepositoryImpl } from './order.repository.impl';
+import { OrderRepositoryImpl } from './order.repository.impl';
 
 describe('OrderRepositoryImpl (Integration)', () => {
   let dataSource: DataSource;
@@ -24,10 +24,6 @@ describe('OrderRepositoryImpl (Integration)', () => {
   };
 
   beforeAll(async () => {
-    const { OrderRepositoryImpl } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      require('./order.repository.impl') as typeof import('./order.repository.impl');
-
     dataSource = new DataSource({
       type: 'postgres',
       host: getRequiredEnv('DB_HOST'),

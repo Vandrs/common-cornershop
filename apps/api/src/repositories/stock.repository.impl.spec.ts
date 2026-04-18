@@ -9,7 +9,7 @@ import {
   InsufficientStockError,
   ProductNotFoundException,
 } from '@domain/index';
-import type { StockRepositoryImpl } from './stock.repository.impl';
+import { StockRepositoryImpl } from './stock.repository.impl';
 
 describe('StockRepositoryImpl (Integration)', () => {
   let dataSource: DataSource;
@@ -30,10 +30,6 @@ describe('StockRepositoryImpl (Integration)', () => {
   };
 
   beforeAll(async () => {
-    const { StockRepositoryImpl } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      require('./stock.repository.impl') as typeof import('./stock.repository.impl');
-
     dataSource = new DataSource({
       type: 'postgres',
       host: getRequiredEnv('DB_HOST'),
