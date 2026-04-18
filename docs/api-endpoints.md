@@ -100,6 +100,98 @@ Retorna uma categoria específica por ID.
 
 ---
 
+## 👤 Customers
+
+### `POST /api/customers`
+
+Cria um novo cliente.
+
+#### Request Body
+
+```json
+{
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "phone": "11999999999"
+}
+```
+
+#### Validações
+
+- `name`: obrigatório, 2–100 caracteres
+- `email`: obrigatório, formato de e-mail válido, único
+- `phone`: obrigatório, único
+
+#### Response 201 (Created)
+
+```json
+{
+  "id": "uuid",
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "phone": "11999999999",
+  "createdAt": "2026-04-18T10:00:00Z",
+  "updatedAt": "2026-04-18T10:00:00Z"
+}
+```
+
+#### Response 400 (Bad Request)
+
+```json
+{
+  "error": "Validation error",
+  "details": [
+    {
+      "field": "email",
+      "message": "email must be a valid email"
+    }
+  ]
+}
+```
+
+#### Response 409 (Conflict)
+
+```json
+{
+  "error": "Customer already exists",
+  "message": "Já existe um cliente com este e-mail ou telefone"
+}
+```
+
+---
+
+### `GET /api/customers/:id`
+
+Retorna um cliente por ID.
+
+#### Path Parameters
+
+- `id` (string, uuid): ID do cliente
+
+#### Response 200 (Success)
+
+```json
+{
+  "id": "uuid",
+  "name": "João Silva",
+  "email": "joao@email.com",
+  "phone": "11999999999",
+  "createdAt": "2026-04-18T10:00:00Z",
+  "updatedAt": "2026-04-18T10:00:00Z"
+}
+```
+
+#### Response 404 (Not Found)
+
+```json
+{
+  "error": "Customer not found",
+  "message": "Cliente não encontrado"
+}
+```
+
+---
+
 ## 🛍️ Products
 
 ### `GET /api/products`
@@ -230,6 +322,7 @@ Cria um novo pedido.
 
 ```json
 {
+  "customerId": "uuid",
   "items": [
     {
       "productId": "323e4567-e89b-12d3-a456-426614174002",
@@ -250,6 +343,8 @@ Cria um novo pedido.
   "id": "623e4567-e89b-12d3-a456-426614174005",
   "orderNumber": "ORD-1710501234567-A3F9",
   "status": "PENDING",
+  "customerId": "uuid",
+  "customer": { "id": "uuid", "name": "João Silva" },
   "totalAmount": 24.5,
   "items": [
     {
@@ -306,12 +401,21 @@ Cria um novo pedido.
 }
 ```
 
-#### Response 404 (Not Found)
+#### Response 404 (Not Found - Product)
 
 ```json
 {
   "error": "Product not found",
   "productId": "323e4567-e89b-12d3-a456-426614174002"
+}
+```
+
+#### Response 404 (Not Found - Customer)
+
+```json
+{
+  "error": "Customer not found",
+  "message": "Cliente não encontrado"
 }
 ```
 
@@ -332,6 +436,8 @@ Retorna um pedido completo com todos os items.
   "id": "623e4567-e89b-12d3-a456-426614174005",
   "orderNumber": "ORD-1710501234567-A3F9",
   "status": "PROCESSING",
+  "customerId": "uuid",
+  "customer": { "id": "uuid", "name": "João Silva" },
   "totalAmount": 24.5,
   "items": [
     {
@@ -387,6 +493,60 @@ Retorna apenas o status atual do pedido (endpoint otimizado).
   "id": "623e4567-e89b-12d3-a456-426614174005",
   "orderNumber": "ORD-1710501234567-A3F9",
   "status": "PROCESSING"
+}
+```
+
+#### Response 404 (Not Found)
+
+```json
+{
+  "error": "Order not found"
+}
+```
+
+---
+
+### `PATCH /api/orders/:id/status`
+
+Atualiza o status de um pedido.
+
+> ⚠️ **Efeitos colaterais de estoque:**
+> - `PENDING → PROCESSING`: estoque dos produtos do pedido é **debitado**
+> - `PROCESSING → CANCELLED`: estoque dos produtos do pedido é **devolvido**
+
+#### Path Parameters
+
+- `id` (string, uuid): ID do pedido
+
+#### Request Body
+
+```json
+{
+  "status": "PROCESSING"
+}
+```
+
+#### Response 200 (Success)
+
+```json
+{
+  "id": "623e4567-e89b-12d3-a456-426614174005",
+  "orderNumber": "ORD-1710501234567-A3F9",
+  "status": "PROCESSING"
+}
+```
+
+#### Response 400 (Bad Request)
+
+```json
+{
+  "error": "Validation error",
+  "details": [
+    {
+      "field": "status",
+      "message": "status must be one of: PENDING, PROCESSING, COMPLETED, CANCELLED"
+    }
+  ]
 }
 ```
 
@@ -503,13 +663,14 @@ Formato padrão de erros:
 
 ### Status Codes
 
-| Code  | Descrição                                |
-| ----- | ---------------------------------------- |
-| `200` | Success - GET                            |
-| `201` | Created - POST                           |
-| `400` | Bad Request - Validação falhou           |
-| `404` | Not Found - Recurso não encontrado       |
-| `500` | Internal Server Error - Erro no servidor |
+| Code  | Descrição                                                          |
+| ----- | ------------------------------------------------------------------ |
+| `200` | Success - GET                                                      |
+| `201` | Created - POST                                                     |
+| `400` | Bad Request - Validação falhou                                     |
+| `404` | Not Found - Recurso não encontrado                                 |
+| `409` | Conflict — Recurso duplicado (e-mail ou telefone já cadastrado)    |
+| `500` | Internal Server Error - Erro no servidor                           |
 
 ---
 
