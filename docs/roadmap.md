@@ -1,7 +1,7 @@
 # Roadmap — Common Cornershop 📍
 
 Data de criação: 2026-03-25
-Última atualização: 2026-04-17
+Última atualização: 2026-04-18
 
 GitHub Project: https://github.com/users/Vandrs/projects/2
 
@@ -35,6 +35,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase 3 — API Layer        | Semana 2–3       | ✅ Concluída |
 | Fase 4 — Quality          | Semana 3–4       | ✅ Concluída |
 | Fase 5 — DevOps Final     | Semana 4         | ⏸️ Em espera |
+| Fase 6 — Pós-MVP Qualidade Técnica | — | 🔄 Em andamento |
 
 ---
 
@@ -269,6 +270,7 @@ Nota de status geral:
 - Fase 2 (Core Domain & DB) está agora marcada como CONCLUÍDA — inclui migrations (T3.2) e seeds idempotentes (T3.3).
 - Fase 3 (API Layer) está agora marcada como CONCLUÍDA — T4.1..T4.6 foram entregues (controllers e rotas incluídos). Completamos também a camada de schemas (T4.2) e as implementações de repositório (T4.3).
 - Fase 4 (Quality) está agora marcada como CONCLUÍDA — todos os testes, incluindo E2E (T5.5), foram mergeados (PR #63).
+- Fase 6 (Pós-MVP Qualidade Técnica) iniciada — T7.1 aberta ([#67](https://github.com/Vandrs/common-cornershop/issues/67)): corrigir carregamento de variáveis de ambiente no Jest e eliminar `require()` lazy nos specs de repositório.
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -312,6 +314,18 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 - Critério de conclusão: PRs disparam workflow que roda lint, tests e build; PRs bloqueados em caso de falha.
 
 - Nota: T6.2 está atualmente EM ESPERA — motivo: a aplicação não será distribuída por enquanto, portanto o pipeline de distribuição/CI completo ficará pausado até nova decisão de produto/distribuição.
+
+---
+
+### Fase 6 — Pós-MVP: Qualidade Técnica
+
+- Objetivo: eliminar débitos técnicos identificados após a conclusão do MVP, garantindo que a suite de testes rode de forma confiável em qualquer ambiente.
+
+| ID   | Issue |                                                                                                              Título | Estimativa | Prioridade | Status         | Link                                                         |
+| ---- | ----- | ------------------------------------------------------------------------------------------------------------------: | ---------: | ---------- | -------------- | ------------------------------------------------------------ |
+| T7.1 | #67   | Testes — Corrigir carregamento de .env no Jest e eliminar require() lazy nos specs de repositório |         2h | Média      | 🔄 Em andamento | [#67](https://github.com/Vandrs/common-cornershop/issues/67) |
+
+- Critério de conclusão: `yarn test:integration` passa 100% com banco disponível; nenhum `require()` dentro de `beforeAll`; `yarn lint` limpo.
 
 ---
 
