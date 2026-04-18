@@ -2,8 +2,8 @@ import 'reflect-metadata';
 
 import Fastify, { FastifyInstance } from 'fastify';
 
-import { InsufficientStockError } from '../../../../../libs/domain/src/errors/insufficient-stock.error';
-import { OrderNotFoundException } from '../../../../../libs/domain/src/errors/order-not-found.error';
+import { InsufficientStockError } from '@domain/errors/insufficient-stock.error';
+import { OrderNotFoundException } from '@domain/errors/order-not-found.error';
 import { registerErrorHandler } from '../../plugins/error-handler.plugin';
 
 import { OrderController } from './order.controller';

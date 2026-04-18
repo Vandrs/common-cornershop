@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import Fastify, { FastifyInstance } from 'fastify';
 
-import { ProductNotFoundException } from '../../../../libs/domain/src/errors/product-not-found.error';
+import { ProductNotFoundException } from '@domain/errors/product-not-found.error';
 import { registerErrorHandler } from '../plugins/error-handler.plugin';
 
 import { ProductController } from './product.controller';
