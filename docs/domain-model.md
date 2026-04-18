@@ -4,10 +4,21 @@
 
 ```mermaid
 erDiagram
+    CUSTOMER ||--o{ ORDER : "places"
     CATEGORY ||--o{ PRODUCT : contains
     PRODUCT ||--|| STOCK : has
     PRODUCT ||--o{ ORDER_ITEM : "appears in"
     ORDER ||--o{ ORDER_ITEM : contains
+
+    CUSTOMER {
+        uuid id PK
+        string name
+        string email "UNIQUE"
+        string phone "UNIQUE"
+        timestamp createdAt
+        timestamp updatedAt
+        timestamp deletedAt
+    }
 
     CATEGORY {
         uuid id PK
@@ -44,6 +55,7 @@ erDiagram
 
     ORDER {
         uuid id PK
+        uuid customerId FK
         string orderNumber "UNIQUE"
         enum status
         decimal totalAmount
@@ -210,12 +222,14 @@ interface Order {
   orderNumber: string;           // Número do pedido (único, gerado)
   status: OrderStatus;           // Status atual
   totalAmount: number;           // Valor total (decimal)
+  customerId: string;            // FK para Customer
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;              // Soft delete
   
   // Relacionamentos
   items: OrderItem[];            // 1:N
+  customer: Customer;            // N:1
 }
 ```
 
@@ -227,7 +241,9 @@ interface Order {
 - ✅ Pedidos em `COMPLETED` ou `CANCELLED` não podem ser modificados
 - ✅ Transição de status segue fluxo: **PENDING → PROCESSING → COMPLETED**
 - ✅ **CANCELLED** pode vir de **PENDING** ou **PROCESSING**
-- ✅ Ao criar pedido, estoque dos produtos é decrementado
+- ✅ Todo pedido deve estar associado a um cliente
+- ✅ Ao confirmar pedido (PENDING → PROCESSING), estoque dos produtos é decrementado
+- ✅ Ao cancelar pedido em PROCESSING (PROCESSING → CANCELLED), estoque dos produtos é devolvido
 
 #### Fluxo de Status
 
@@ -294,6 +310,41 @@ interface OrderItem {
 
 ---
 
+### 6️⃣ Customer (Cliente)
+
+Representa o cliente que realiza pedidos na loja.
+
+#### Interface TypeScript
+
+```typescript
+interface Customer {
+  id: string;                    // UUID
+  name: string;                  // Nome do cliente
+  email: string;                 // E-mail único
+  phone: string;                 // Telefone único
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;              // Soft delete
+
+  // Relacionamentos
+  orders: Order[];               // 1:N
+}
+```
+
+#### Regras de Negócio
+
+- ✅ E-mail deve ser único (case-insensitive)
+- ✅ Telefone deve ser único
+- ✅ Soft delete — cliente deletado não aparece em listagens mas pedidos associados permanecem
+
+#### Validações
+
+- **name**: obrigatório, 2–100 caracteres
+- **email**: obrigatório, formato de e-mail válido, único
+- **phone**: obrigatório, único
+
+---
+
 ## Características Comuns
 
 Todas as entidades compartilham:
@@ -309,6 +360,12 @@ Todas as entidades compartilham:
 
 ```mermaid
 graph TB
+    subgraph "Customer Module"
+        CE2[Customer Entity]
+        CUC2[Customer UseCases]
+        CR2[ICustomerRepository]
+    end
+
     subgraph "Category Module"
         CE[Category Entity]
         CUC[Category UseCases]
@@ -338,6 +395,7 @@ graph TB
     SE -->|tracks| PE
     OIE -->|references| PE
     OIE -->|belongs to| OE
+    OE -->|placed by| CE2
     
     style CE fill:#ff6b6b
     style PE fill:#4ecdc4
@@ -350,6 +408,7 @@ graph TB
 
 | Termo | Definição |
 |-------|-----------|
+| **Customer** | Pessoa identificada que realiza pedidos na loja |
 | **Category** | Agrupamento lógico de produtos similares |
 | **Product** | Item vendável na loja com preço e estoque |
 | **Stock** | Quantidade disponível de um produto específico |
@@ -369,12 +428,15 @@ graph TB
 - `products.name + products.categoryId` (unique together)
 - `stock.productId` (unique)
 - `orders.orderNumber` (unique)
+- `customers.email` (unique, case-insensitive)
+- `customers.phone` (unique)
 
 ### Foreign Keys
 - `products.categoryId` → `categories.id`
 - `stock.productId` → `products.id`
 - `order_items.orderId` → `orders.id`
 - `order_items.productId` → `products.id`
+- `orders.customerId` → `customers.id`
 
 ### Check Constraints
 - `products.price > 0`
