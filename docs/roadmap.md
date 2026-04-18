@@ -36,6 +36,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase 4 — Quality          | Semana 3–4       | ✅ Concluída |
 | Fase 5 — DevOps Final     | Semana 4         | ⏸️ Em espera |
 | Fase 6 — Pós-MVP Qualidade Técnica | — | 🔄 Em andamento |
+| Fase 7 — Customer & Stock Side-effects | — | 🔄 Em andamento |
 
 ---
 
@@ -271,6 +272,7 @@ Nota de status geral:
 - Fase 3 (API Layer) está agora marcada como CONCLUÍDA — T4.1..T4.6 foram entregues (controllers e rotas incluídos). Completamos também a camada de schemas (T4.2) e as implementações de repositório (T4.3).
 - Fase 4 (Quality) está agora marcada como CONCLUÍDA — todos os testes, incluindo E2E (T5.5), foram mergeados (PR #63).
 - Fase 6 (Pós-MVP Qualidade Técnica) iniciada — T7.1 aberta ([#67](https://github.com/Vandrs/common-cornershop/issues/67)): corrigir carregamento de variáveis de ambiente no Jest e eliminar `require()` lazy nos specs de repositório.
+- Fase 7 (Customer & Stock Side-effects) planejada — tasks T8.1–T8.7 definidas; implementação a iniciar.
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -326,6 +328,31 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | T7.1 | #67   | Testes — Corrigir carregamento de .env no Jest e eliminar require() lazy nos specs de repositório |         2h | Média      | 🔄 Em andamento | [#67](https://github.com/Vandrs/common-cornershop/issues/67) |
 
 - Critério de conclusão: `yarn test:integration` passa 100% com banco disponível; nenhum `require()` dentro de `beforeAll`; `yarn lint` limpo.
+
+---
+
+### Fase 7 — Customer & Stock Side-effects
+
+- Objetivo: implementar a entidade Customer, associá-la ao pedido e adicionar os efeitos colaterais de estoque nas transições de status do pedido.
+
+| ID   | Título                                                                                          | Depende de  | Estimativa | Prioridade | Status        |
+| ---- | ----------------------------------------------------------------------------------------------- | ----------- | ---------: | ---------- | ------------- |
+| T8.1 | Domain — Entidade `Customer`: entity, migration, interface de repositório                       | —           |         3h | Alta       | ⏳ Pendente  |
+| T8.2 | Domain — Use Cases de Customer: `CreateCustomer`, `GetCustomer`                                 | T8.1        |         2h | Alta       | ⏳ Pendente  |
+| T8.3 | Infra API — `CustomerRepositoryImpl` (TypeORM)                                                  | T8.1        |         2h | Alta       | ⏳ Pendente  |
+| T8.4 | Infra API — Controller + rotas + Zod schemas de Customer                                        | T8.2, T8.3  |         2h | Média      | ⏳ Pendente  |
+| T8.5 | Domain — Adicionar `customerId` na `Order` + migration                                          | T8.1        |         2h | Alta       | ⏳ Pendente  |
+| T8.6 | Domain — Débito de estoque em `PENDING → PROCESSING` (`UpdateOrderStatusUseCase`)               | —           |         2h | Alta       | ⏳ Pendente  |
+| T8.7 | Domain — Estorno de estoque em `PROCESSING → CANCELLED` (`CancelOrderUseCase` + `UpdateOrderStatusUseCase`) | T8.6 |    1h | Alta       | ⏳ Pendente  |
+
+**Paralelismo:**
+- T8.1 é pré-requisito de T8.2, T8.3 e T8.5
+- T8.6 é independente e pode rodar em paralelo com T8.1
+- T8.7 depende de T8.6
+- T8.2 + T8.3 podem rodar em paralelo após T8.1
+- T8.4 depende de T8.2 + T8.3
+
+- Critério de conclusão: endpoints `POST /api/customers` e `GET /api/customers/:id` funcionais; `POST /api/orders` exige `customerId` válido; estoque é debitado ao confirmar pedido e devolvido ao cancelar.
 
 ---
 
@@ -386,7 +413,7 @@ Features planejadas (do README):
 - Webhooks — Notificações de mudança de status
 - Relatórios — Vendas por período, produtos mais vendidos
 - Alertas de Estoque — Notificação quando estoque < mínimo
-- Gestão de Clientes — CRUD de clientes
+- Gestão de Clientes — CRUD de clientes (em andamento — Fase 7)
 - Pagamentos — Integração com gateways
 - API Documentation — Swagger/OpenAPI
 - Rate Limiting — Proteção contra abuso
