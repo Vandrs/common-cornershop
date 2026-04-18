@@ -188,3 +188,38 @@ When multiple agents run simultaneously and each creates a new git branch, a rac
 2. Before committing, always assert: `git branch --show-current` returns the expected branch name.
 3. If branches must be created in parallel, prefer having each agent do `git checkout -b <branch> main` from a clean state, and validate with `git status` before staging files.
 4. Never assume the working branch is correct — always verify programmatically.
+
+## Test Environment Setup (Integration & E2E)
+
+Integration and E2E tests require a running PostgreSQL instance and a `.env.test` file at the repo root.
+
+### Required: `.env.test`
+
+Create `.env.test` at the repo root (not committed — already in `.gitignore`):
+
+```
+NODE_ENV=test
+DB_HOST=localhost
+DB_PORT=5433
+DB_USER=test
+DB_PASSWORD=test
+DB_NAME=cornershop_test
+```
+
+### Test database (Podman container)
+
+The test database runs as a Podman container on port **5433** (separate from the dev DB on 5432).
+
+Verify the container is running before executing integration tests:
+
+```bash
+podman ps --filter name=cornershop-test-db
+```
+
+### Running tests by type
+
+```bash
+yarn test:unit          # Unit tests only — no DB required (libs/domain)
+```
+
+> **Important for agents:** Always verify `.env.test` exists and the test container is running before executing `yarn test:integration` or `yarn test:e2e`. Failing to do so will result in misleading errors like `Missing required test environment variable: DB_PASSWORD`.

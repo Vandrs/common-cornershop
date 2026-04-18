@@ -59,10 +59,12 @@ export default {
 export default {
   displayName: 'api',
   preset: '../../jest.preset.js',
+  testMatch: ['<rootDir>/src/**/*.spec.ts', '<rootDir>/src/**/*.e2e-spec.ts'],
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.spec.json' }],
   },
+  setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/api',
   collectCoverageFrom: [
@@ -79,7 +81,6 @@ export default {
       statements: 80,
     },
   },
-  setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
 };
 ```
 
@@ -97,29 +98,49 @@ export default {
 }
 ```
 
+### Ambiente de Testes
+
+Os testes de integração e E2E requerem um banco PostgreSQL disponível localmente.
+
+#### `.env.test` (não commitado)
+
+Crie o arquivo `.env.test` na raiz do projeto com o seguinte conteúdo:
+
+```
+NODE_ENV=test
+DB_HOST=localhost
+DB_PORT=5433
+DB_USER=test
+DB_PASSWORD=test
+DB_NAME=cornershop_test
+```
+
+> O banco de teste roda em um container separado do banco de desenvolvimento (porta 5433 vs 5432). Consulte `docs/database.md` para instruções de setup do container.
+
+#### Executando testes de integração
+
+Com o banco disponível:
+
+```bash
+yarn test:integration
+```
+
+> **Atenção:** `yarn test:unit` inclui todos os arquivos `*.spec.ts`, incluindo os de repositório que dependem do banco. Para rodar apenas testes sem banco, use `yarn test:unit` garantindo que o banco esteja disponível, ou filtre por caminho: `yarn test libs/domain`.
+
 #### `apps/api/src/test/setup.ts`
 
 ```typescript
-// Setup global para todos os testes
 import 'reflect-metadata';
 
-// Mock de variáveis de ambiente
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
+
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5433/cornershop_test';
-
-// Timeout global para testes (útil para operações de banco)
-jest.setTimeout(10000);
-
-// Mock de console para reduzir ruído nos logs
-global.console = {
-  ...console,
-  log: jest.fn(),
-  debug: jest.fn(),
-  info: jest.fn(),
-  warn: jest.fn(),
-  // Manter error e outros métodos críticos
-};
 ```
+
+> **Nota:** O setup carrega variáveis de ambiente do arquivo `.env.test` na raiz do projeto via `dotenv`. Este arquivo **não é commitado** (está no `.gitignore`) e deve ser criado manualmente em ambiente local. Veja a seção "Ambiente de Testes" abaixo para o conteúdo esperado.
 
 ---
 
