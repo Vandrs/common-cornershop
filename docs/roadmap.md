@@ -338,17 +338,17 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | ID   | Título                                                                                          | Depende de  | Estimativa | Prioridade | Status        |
 | ---- | ----------------------------------------------------------------------------------------------- | ----------- | ---------: | ---------- | ------------- |
 | T8.1 | Domain — Entidade `Customer`: entity, migration, interface de repositório                       | —           |         3h | Alta       | ✅ Concluída |
-| T8.2 | Domain — Use Cases de Customer: `CreateCustomer`, `GetCustomer`                                 | T8.1        |         2h | Alta       | 🔎 Em revisão |
-| T8.3 | Infra API — `CustomerRepositoryImpl` (TypeORM)                                                  | T8.1        |         2h | Alta       | 🔎 Em revisão |
+| T8.2 | Domain — Use Cases de Customer: `CreateCustomer`, `GetCustomer`                                 | T8.1        |         2h | Alta       | ✅ Concluída |
+| T8.3 | Infra API — `CustomerRepositoryImpl` (TypeORM)                                                  | T8.1        |         2h | Alta       | ✅ Concluída |
 | T8.4 | Infra API — Controller + rotas + Zod schemas de Customer                                        | T8.2, T8.3  |         2h | Média      | ⏳ Pendente  |
 | T8.5 | Domain — Adicionar `customerId` na `Order` + migration                                          | T8.1        |         2h | Alta       | ⏳ Pendente  |
 | T8.6 | Domain — Débito de estoque em `PENDING → PROCESSING` (`UpdateOrderStatusUseCase`)               | —           |         2h | Alta       | ✅ Concluída |
-| T8.7 | Domain — Estorno de estoque em `PROCESSING → CANCELLED` (`CancelOrderUseCase` + `UpdateOrderStatusUseCase`) | T8.6 |    1h | Alta       | 🔎 Em revisão |
+| T8.7 | Domain — Estorno de estoque em `PROCESSING → CANCELLED` (`CancelOrderUseCase` + `UpdateOrderStatusUseCase`) | T8.6 |    1h | Alta       | ✅ Concluída |
 
 **Paralelismo:**
-- T8.1 (Concluída — PR #78, board issue #69 Done) desbloqueou T8.2, T8.3 e T8.5. As implementações de T8.2, T8.3 e T8.7 foram concluídas em branches e estão atualmente em revisão nas PRs #83 (T8.2), #81 (T8.3) e #82 (T8.7); as issues relacionadas (#71, #72, #73) estão em estado "Review" no board.
-- T8.6 (Concluída — PR #79, board issue #70 Done) desbloqueou T8.7 (em revisão).
-- Observação: T8.6 foi independente e pôde rodar em paralelo com T8.1; recomendamos aguardar a merge das PRs de T8.2 e T8.3 antes de iniciar T8.4 (T8.4 permanece bloqueada). T8.5 está pronta para execução.
+ - T8.1 (Concluída — PR #78, board issue #69 Done) desbloqueou T8.2, T8.3 e T8.5. As implementações de T8.2, T8.3 e T8.7 foram mergeadas (PRs #83, #81 e #82 respectivamente) e as issues relacionadas (#71, #72, #73) foram fechadas e movidas para Done no board.
+ - T8.6 (Concluída — PR #79, board issue #70 Done) desbloqueou T8.7 (mergeada).
+ - Observação: T8.6 foi independente e pôde rodar em paralelo com T8.1; como consequência da merge de T8.2 e T8.3, T8.4 foi desbloqueada e pode ser iniciada. T8.5 permanece pronta para execução.
 
 - Critério de conclusão: endpoints `POST /api/customers` e `GET /api/customers/:id` funcionais; `POST /api/orders` exige `customerId` válido; estoque é debitado ao confirmar pedido e devolvido ao cancelar.
 
