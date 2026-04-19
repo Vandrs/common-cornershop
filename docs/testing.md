@@ -140,7 +140,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.test') });
 process.env.NODE_ENV = 'test';
 ```
 
-> **Nota:** O setup carrega variáveis de ambiente do arquivo `.env.test` na raiz do projeto via `dotenv`. Este arquivo **não é commitado** (está no `.gitignore`) e deve ser criado manualmente em ambiente local. Veja a seção "Ambiente de Testes" abaixo para o conteúdo esperado.
+> **Nota:** O setup carrega variáveis de ambiente do arquivo `.env.test` na raiz do projeto via `dotenv`. Este arquivo **não é commitado** (está no `.gitignore`) e deve ser criado manualmente em ambiente local. Veja a seção "Ambiente de Testes" acima para o conteúdo esperado.
 
 ---
 
