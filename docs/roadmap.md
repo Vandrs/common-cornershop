@@ -272,7 +272,7 @@ Nota de status geral:
 - Fase 3 (API Layer) está agora marcada como CONCLUÍDA — T4.1..T4.6 foram entregues (controllers e rotas incluídos). Completamos também a camada de schemas (T4.2) e as implementações de repositório (T4.3).
 - Fase 4 (Quality) está agora marcada como CONCLUÍDA — todos os testes, incluindo E2E (T5.5), foram mergeados (PR #63).
 - Fase 6 (Pós-MVP Qualidade Técnica) iniciada — T7.1 aberta ([#67](https://github.com/Vandrs/common-cornershop/issues/67)): corrigir carregamento de variáveis de ambiente no Jest e eliminar `require()` lazy nos specs de repositório.
-- Fase 7 (Customer & Stock Side-effects) em execução — implementação iniciada. As tasks T8.1 e T8.6 foram mergeadas (PR #78 e PR #79, respectivamente) e as issues correspondentes no board (#69, #70) estão marcadas como Done. As demais tasks (T8.2, T8.3, T8.4, T8.5, T8.7) permanecem pendentes e prontas para execução conforme dependências.
+ - Fase 7 (Customer & Stock Side-effects) em execução — implementação iniciada. As tasks T8.1 e T8.6 foram mergeadas (PR #78 e PR #79, respectivamente) e as issues correspondentes no board (#69, #70) estão marcadas como Done. As implementações de T8.2, T8.3 e T8.7 foram concluídas em branches e estão atualmente em revisão nas PRs #83 (T8.2), #81 (T8.3) e #82 (T8.7). As issues relacionadas (#71, #72, #73) permanecem abertas e estão em estado "Review" no board. T8.4 permanece bloqueada até que T8.2 e T8.3 sejam mergeadas. T8.5 está pronta para execução.
 
 Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (testes unitários com cobertura) são marcos já entregues.
 
@@ -338,17 +338,17 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 | ID   | Título                                                                                          | Depende de  | Estimativa | Prioridade | Status        |
 | ---- | ----------------------------------------------------------------------------------------------- | ----------- | ---------: | ---------- | ------------- |
 | T8.1 | Domain — Entidade `Customer`: entity, migration, interface de repositório                       | —           |         3h | Alta       | ✅ Concluída |
-| T8.2 | Domain — Use Cases de Customer: `CreateCustomer`, `GetCustomer`                                 | T8.1        |         2h | Alta       | ⏳ Pendente  |
-| T8.3 | Infra API — `CustomerRepositoryImpl` (TypeORM)                                                  | T8.1        |         2h | Alta       | ⏳ Pendente  |
+| T8.2 | Domain — Use Cases de Customer: `CreateCustomer`, `GetCustomer`                                 | T8.1        |         2h | Alta       | 🔎 Em revisão |
+| T8.3 | Infra API — `CustomerRepositoryImpl` (TypeORM)                                                  | T8.1        |         2h | Alta       | 🔎 Em revisão |
 | T8.4 | Infra API — Controller + rotas + Zod schemas de Customer                                        | T8.2, T8.3  |         2h | Média      | ⏳ Pendente  |
 | T8.5 | Domain — Adicionar `customerId` na `Order` + migration                                          | T8.1        |         2h | Alta       | ⏳ Pendente  |
 | T8.6 | Domain — Débito de estoque em `PENDING → PROCESSING` (`UpdateOrderStatusUseCase`)               | —           |         2h | Alta       | ✅ Concluída |
-| T8.7 | Domain — Estorno de estoque em `PROCESSING → CANCELLED` (`CancelOrderUseCase` + `UpdateOrderStatusUseCase`) | T8.6 |    1h | Alta       | ⏳ Pendente  |
+| T8.7 | Domain — Estorno de estoque em `PROCESSING → CANCELLED` (`CancelOrderUseCase` + `UpdateOrderStatusUseCase`) | T8.6 |    1h | Alta       | 🔎 Em revisão |
 
 **Paralelismo:**
-- T8.1 (Concluída — PR #78, board issue #69 Done) desbloqueou T8.2, T8.3 e T8.5: estas tasks podem ser iniciadas em paralelo por desenvolvedores distintos.
-- T8.6 (Concluída — PR #79, board issue #70 Done) desbloqueou T8.7.
-- Observação: T8.6 foi independente e pôde rodar em paralelo com T8.1; recomendamos iniciar T8.2 e T8.3 em paralelo enquanto T8.5 é realizada (dependendo do fluxo de migração). T8.4 continua dependendo da finalização de T8.2 + T8.3.
+- T8.1 (Concluída — PR #78, board issue #69 Done) desbloqueou T8.2, T8.3 e T8.5. As implementações de T8.2, T8.3 e T8.7 foram concluídas em branches e estão atualmente em revisão nas PRs #83 (T8.2), #81 (T8.3) e #82 (T8.7); as issues relacionadas (#71, #72, #73) estão em estado "Review" no board.
+- T8.6 (Concluída — PR #79, board issue #70 Done) desbloqueou T8.7 (em revisão).
+- Observação: T8.6 foi independente e pôde rodar em paralelo com T8.1; recomendamos aguardar a merge das PRs de T8.2 e T8.3 antes de iniciar T8.4 (T8.4 permanece bloqueada). T8.5 está pronta para execução.
 
 - Critério de conclusão: endpoints `POST /api/customers` e `GET /api/customers/:id` funcionais; `POST /api/orders` exige `customerId` válido; estoque é debitado ao confirmar pedido e devolvido ao cancelar.
 
