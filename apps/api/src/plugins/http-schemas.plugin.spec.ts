@@ -26,6 +26,7 @@ describe('registerHttpSchemas', () => {
     expect(schemas).toHaveProperty('OrderResponse');
     expect(schemas).toHaveProperty('OrderStatusResponse');
     expect(schemas).toHaveProperty('OrdersListResponse');
+    expect(schemas).toHaveProperty('CustomerNotFoundResponse');
 
     expect(schemas).toHaveProperty('ValidationErrorResponse');
     expect(schemas).toHaveProperty('InternalServerErrorResponse');

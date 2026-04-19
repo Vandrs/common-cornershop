@@ -135,13 +135,20 @@ export const orderNotFoundResponseSchema = domainErrorResponseSchema.extend({
 
 export type OrderNotFoundResponseSchema = z.infer<typeof orderNotFoundResponseSchema>;
 
+export const customerNotFoundResponseSchema = domainErrorResponseSchema.extend({
+  error: z.literal('CustomerNotFoundException'),
+  message: z.literal('Cliente não encontrado'),
+});
+
+export type CustomerNotFoundResponseSchema = z.infer<typeof customerNotFoundResponseSchema>;
+
 export const insufficientStockResponseSchema = domainErrorResponseSchema.extend({
   error: z.literal('InsufficientStockError'),
   message: z.literal('Estoque insuficiente'),
 });
 
 export const insufficientStockDetailedResponseSchema = z.object({
-  error: z.string(),
+  error: z.literal('InsufficientStockError'),
   available: z.number().int().nonnegative(),
   requested: z.number().int().positive(),
 });
