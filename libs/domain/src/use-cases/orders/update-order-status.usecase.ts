@@ -2,7 +2,9 @@ import { injectable, inject } from 'tsyringe';
 
 import { Order } from '../../entities/order.entity';
 import { OrderStatus } from '../../enums/order-status.enum';
+import { IOrderItemRepository } from '../../repositories/order-item.repository';
 import { IOrderRepository } from '../../repositories/order.repository';
+import { IStockRepository } from '../../repositories/stock.repository';
 import { OrderService } from '../../services/order.service';
 
 /**
@@ -26,6 +28,10 @@ export class UpdateOrderStatusUseCase {
   constructor(
     @inject('IOrderRepository')
     private readonly orderRepository: IOrderRepository,
+    @inject('IOrderItemRepository')
+    private readonly orderItemRepository: IOrderItemRepository,
+    @inject('IStockRepository')
+    private readonly stockRepository: IStockRepository,
     @inject('OrderService')
     private readonly orderService: OrderService,
   ) {}
@@ -43,6 +49,42 @@ export class UpdateOrderStatusUseCase {
 
     this.orderService.validateStatusTransition(order.status, dto.status);
 
+    if (order.status === OrderStatus.PENDING && dto.status === OrderStatus.PROCESSING) {
+      const orderItems = await this.orderItemRepository.findByOrderId(order.id);
+      const debitedItems: Array<{ productId: string; quantity: number }> = [];
+
+      try {
+        for (const item of orderItems) {
+          await this.stockRepository.adjustQuantity(item.productId, -item.quantity);
+          debitedItems.push({ productId: item.productId, quantity: item.quantity });
+        }
+
+        const updatedOrder = await this.orderRepository.updateStatus(dto.id, dto.status);
+
+        return updatedOrder;
+      } catch (error) {
+        await this.rollbackDebits(debitedItems);
+        throw error;
+      }
+    }
+
     return this.orderRepository.updateStatus(dto.id, dto.status);
+  }
+
+  /**
+   * Best-effort compensation to revert previously debited stock.
+   */
+  private async rollbackDebits(
+    debitedItems: Array<{ productId: string; quantity: number }>,
+  ): Promise<void> {
+    for (let index = debitedItems.length - 1; index >= 0; index -= 1) {
+      const item = debitedItems[index];
+
+      try {
+        await this.stockRepository.adjustQuantity(item.productId, item.quantity);
+      } catch {
+        // Intentionally ignored to preserve the original failure.
+      }
+    }
   }
 }
