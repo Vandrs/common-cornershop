@@ -19,6 +19,12 @@ describe('registerHttpSchemas', () => {
     expect(schemas).toHaveProperty('ProductsListResponse');
     expect(schemas).toHaveProperty('ProductResponse');
 
+    expect(schemas).toHaveProperty('CustomersCreateBody');
+    expect(schemas).toHaveProperty('CustomersParams');
+    expect(schemas).toHaveProperty('CustomerResponse');
+    expect(schemas).toHaveProperty('CustomerNotFoundResponse');
+    expect(schemas).toHaveProperty('CustomerAlreadyExistsResponse');
+
     expect(schemas).toHaveProperty('OrdersCreateBody');
     expect(schemas).toHaveProperty('OrdersParams');
     expect(schemas).toHaveProperty('OrdersListQuery');

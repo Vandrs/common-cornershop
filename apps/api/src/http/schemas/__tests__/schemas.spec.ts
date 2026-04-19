@@ -1,7 +1,9 @@
 import Fastify from 'fastify';
 
 import {
+  createCustomerBodySchema,
   createOrderBodySchema,
+  customerParamsSchema,
   idParamSchema,
   listOrdersQuerySchema,
   listProductsQuerySchema,
@@ -70,6 +72,42 @@ describe('http zod schemas', () => {
           items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
         }),
       ).toThrow();
+    });
+  });
+
+  describe('createCustomerBodySchema', () => {
+    it('parses valid create customer payload', () => {
+      const parsed = createCustomerBodySchema.parse({
+        name: 'João Silva',
+        email: 'joao@email.com',
+        phone: '11999999999',
+      });
+
+      expect(parsed).toEqual({
+        name: 'João Silva',
+        email: 'joao@email.com',
+        phone: '11999999999',
+      });
+    });
+
+    it('rejects invalid create customer payload', () => {
+      expect(() =>
+        createCustomerBodySchema.parse({
+          name: 'A',
+          email: 'invalid-email',
+          phone: '',
+        }),
+      ).toThrow();
+    });
+  });
+
+  describe('customerParamsSchema', () => {
+    it('parses valid customer id param', () => {
+      const parsed = customerParamsSchema.parse({
+        id: 'f23e4567-e89b-12d3-a456-426614174111',
+      });
+
+      expect(parsed.id).toBe('f23e4567-e89b-12d3-a456-426614174111');
     });
   });
 

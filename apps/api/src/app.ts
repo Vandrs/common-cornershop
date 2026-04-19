@@ -6,6 +6,7 @@ import { registerOrderRoutes } from './http/routes/order.routes';
 import { registerDependencies } from './container/dependency-injection';
 import { registerProductRoutes } from './routes/product.routes';
 import { registerCategoryRoutes } from './routes/category.routes';
+import { registerCustomerRoutes } from './routes/customer.routes';
 import { registerErrorHandler } from './plugins/error-handler.plugin';
 import { registerHttpSchemas } from './plugins/http-schemas.plugin';
 import { registerSwagger } from './plugins/swagger.plugin';
@@ -42,6 +43,7 @@ export async function createApp(): Promise<FastifyInstance> {
   await registerHttpSchemas(app);
   await registerProductRoutes(app);
   await registerCategoryRoutes(app);
+  await registerCustomerRoutes(app);
   await registerOrderRoutes(app);
 
   return app;
