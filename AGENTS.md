@@ -220,6 +220,8 @@ podman ps --filter name=cornershop-test-db
 
 ```bash
 yarn test:unit          # Unit tests only — no DB required (libs/domain)
+yarn test:integration   # Requires DB + .env.test (repository + controller specs)
+yarn test:e2e           # Requires DB + .env.test (full stack)
 ```
 
 > **Important for agents:** Always verify `.env.test` exists and the test container is running before executing `yarn test:integration` or `yarn test:e2e`. Failing to do so will result in misleading errors like `Missing required test environment variable: DB_PASSWORD`.
