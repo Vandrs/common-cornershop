@@ -1,8 +1,9 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { BaseEntity } from './base.entity';
 import { OrderStatus } from '../enums/order-status.enum';
 import { OrderItem } from './order-item.entity';
+import { Customer } from './customer.entity';
 
 /**
  * Domain entity representing a customer order.
@@ -13,6 +14,12 @@ import { OrderItem } from './order-item.entity';
  */
 @Entity('orders')
 export class Order extends BaseEntity {
+  /**
+   * Foreign key referencing the customer who placed this order.
+   */
+  @Column({ type: 'uuid', name: 'customer_id' })
+  customerId!: string;
+
   /**
    * Business-readable unique order identifier (e.g. "ORD-2024-00001").
    */
@@ -38,4 +45,11 @@ export class Order extends BaseEntity {
    */
   @OneToMany(() => OrderItem, (item) => item.order)
   items!: OrderItem[];
+
+  /**
+   * Customer who placed this order.
+   */
+  @ManyToOne(() => Customer, (customer) => customer.orders)
+  @JoinColumn({ name: 'customer_id' })
+  customer!: Customer;
 }

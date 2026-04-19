@@ -21,6 +21,7 @@ const orderProductCreatedSummarySchema = orderProductSummarySchema.extend({
 });
 
 export const createOrderBodySchema = z.object({
+  customerId: uuidSchema,
   items: z
     .array(
       z.object({

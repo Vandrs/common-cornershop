@@ -13,6 +13,7 @@ import { OrderController } from './order.controller';
 const makeOrder = (): Order => {
   const order = new Order();
   order.id = '123e4567-e89b-12d3-a456-426614174000';
+  order.customerId = '223e4567-e89b-12d3-a456-426614174001';
   order.orderNumber = 'ORD-1710501234567-A3F9';
   order.status = OrderStatus.PENDING;
   order.totalAmount = 24.5;
@@ -68,6 +69,7 @@ describe('OrderController', () => {
 
     const request = {
       body: {
+        customerId: '223e4567-e89b-12d3-a456-426614174001',
         items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
       },
     } as unknown;
@@ -79,6 +81,7 @@ describe('OrderController', () => {
     await controller.create(request as never, reply);
 
     expect(createOrderUseCase.execute).toHaveBeenCalledWith({
+      customerId: '223e4567-e89b-12d3-a456-426614174001',
       items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
     });
     expect(status).toHaveBeenCalledWith(201);

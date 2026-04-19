@@ -47,6 +47,7 @@ describe('http zod schemas', () => {
   describe('createOrderBodySchema', () => {
     it('parses valid create order payload', () => {
       const parsed = createOrderBodySchema.parse({
+        customerId: '223e4567-e89b-12d3-a456-426614174001',
         items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
       });
 
@@ -55,7 +56,20 @@ describe('http zod schemas', () => {
     });
 
     it('rejects empty items list', () => {
-      expect(() => createOrderBodySchema.parse({ items: [] })).toThrow();
+      expect(() =>
+        createOrderBodySchema.parse({
+          customerId: '223e4567-e89b-12d3-a456-426614174001',
+          items: [],
+        }),
+      ).toThrow();
+    });
+
+    it('rejects missing customerId', () => {
+      expect(() =>
+        createOrderBodySchema.parse({
+          items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
+        }),
+      ).toThrow();
     });
   });
 

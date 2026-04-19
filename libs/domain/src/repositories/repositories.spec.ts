@@ -1,12 +1,14 @@
 import { PaginatedResult } from '@shared/types/pagination.types';
 
 import { Category } from '../entities/category.entity';
+import { Customer } from '../entities/customer.entity';
 import { Order } from '../entities/order.entity';
 import { OrderItem } from '../entities/order-item.entity';
 import { Product } from '../entities/product.entity';
 import { Stock } from '../entities/stock.entity';
 import { OrderStatus } from '../enums/order-status.enum';
 import { ICategoryRepository, CategoryListParams } from './category.repository';
+import { ICustomerRepository } from './customer.repository';
 import { IOrderRepository, OrderListParams } from './order.repository';
 import { IOrderItemRepository } from './order-item.repository';
 import { IProductRepository, ProductListParams } from './product.repository';
@@ -123,6 +125,29 @@ describe('Repository contracts', () => {
 
     const repo: IOrderRepository = new DummyOrderRepository();
     expect(repo).toBeInstanceOf(DummyOrderRepository);
+  });
+
+  it('Customer repository contract is satisfiable', async () => {
+    class DummyCustomerRepository implements ICustomerRepository {
+      async findById(): Promise<Customer | null> {
+        return null;
+      }
+
+      async findByEmail(): Promise<Customer | null> {
+        return null;
+      }
+
+      async save(customer: Customer): Promise<Customer> {
+        return customer;
+      }
+
+      async softDelete(): Promise<void> {
+        return undefined;
+      }
+    }
+
+    const repo: ICustomerRepository = new DummyCustomerRepository();
+    expect(repo).toBeInstanceOf(DummyCustomerRepository);
   });
 
   it('Order item repository contract is satisfiable', async () => {

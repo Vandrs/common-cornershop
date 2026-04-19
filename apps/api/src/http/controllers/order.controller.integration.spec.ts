@@ -47,7 +47,6 @@ describe('OrderController (integration)', () => {
   });
 
   it('should create order on POST /api/orders', async () => {
-    // Arrange
     createOrderUseCase.execute.mockResolvedValue({
       id: '623e4567-e89b-12d3-a456-426614174005',
       orderNumber: 'ORD-1710501234567-A3F9',
@@ -71,18 +70,18 @@ describe('OrderController (integration)', () => {
       updatedAt: new Date('2026-03-15T15:00:00.000Z'),
     });
 
-    // Act
     const response = await app.inject({
       method: 'POST',
       url: '/api/orders',
       payload: {
+        customerId: '223e4567-e89b-12d3-a456-426614174001',
         items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
       },
     });
 
-    // Assert
     expect(response.statusCode).toBe(201);
     expect(createOrderUseCase.execute).toHaveBeenCalledWith({
+      customerId: '223e4567-e89b-12d3-a456-426614174001',
       items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
     });
     expect(response.json()).toEqual({
@@ -110,14 +109,12 @@ describe('OrderController (integration)', () => {
   });
 
   it('should return ValidationError envelope for invalid create payload', async () => {
-    // Act
     const response = await app.inject({
       method: 'POST',
       url: '/api/orders',
       payload: {},
     });
 
-    // Assert
     expect(response.statusCode).toBe(400);
     expect(response.json()).toEqual(
       expect.objectContaining({
@@ -133,19 +130,17 @@ describe('OrderController (integration)', () => {
   });
 
   it('should return InsufficientStockError envelope when stock is insufficient', async () => {
-    // Arrange
     createOrderUseCase.execute.mockRejectedValue(new InsufficientStockError('Coca-Cola 2L'));
 
-    // Act
     const response = await app.inject({
       method: 'POST',
       url: '/api/orders',
       payload: {
+        customerId: '223e4567-e89b-12d3-a456-426614174001',
         items: [{ productId: '323e4567-e89b-12d3-a456-426614174002', quantity: 2 }],
       },
     });
 
-    // Assert
     expect(response.statusCode).toBe(400);
     expect(response.json()).toEqual({
       error: 'InsufficientStockError',
@@ -154,7 +149,6 @@ describe('OrderController (integration)', () => {
   });
 
   it('should return order list on GET /api/orders and parse filters', async () => {
-    // Arrange
     listOrdersUseCase.execute.mockResolvedValue({
       data: [
         {
@@ -171,13 +165,11 @@ describe('OrderController (integration)', () => {
       meta: { page: 1, limit: 10, total: 1, totalPages: 1 },
     });
 
-    // Act
     const response = await app.inject({
       method: 'GET',
       url: '/api/orders?page=1&limit=10&status=PENDING&dateFrom=2026-03-01T00:00:00.000Z&dateTo=2026-03-31T23:59:59.000Z',
     });
 
-    // Assert
     expect(response.statusCode).toBe(200);
     expect(listOrdersUseCase.execute).toHaveBeenCalledWith({
       page: 1,
@@ -203,13 +195,11 @@ describe('OrderController (integration)', () => {
   });
 
   it('should return ValidationError envelope for invalid list filters', async () => {
-    // Act
     const response = await app.inject({
       method: 'GET',
       url: '/api/orders?status=INVALID',
     });
 
-    // Assert
     expect(response.statusCode).toBe(400);
     expect(response.json()).toEqual(
       expect.objectContaining({
@@ -225,16 +215,13 @@ describe('OrderController (integration)', () => {
   });
 
   it('should return OrderNotFoundException envelope on GET /api/orders/:id', async () => {
-    // Arrange
     getOrderUseCase.execute.mockRejectedValue(new OrderNotFoundException());
 
-    // Act
     const response = await app.inject({
       method: 'GET',
       url: '/api/orders/623e4567-e89b-12d3-a456-426614174005',
     });
 
-    // Assert
     expect(response.statusCode).toBe(404);
     expect(response.json()).toEqual({
       error: 'OrderNotFoundException',

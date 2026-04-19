@@ -8,6 +8,7 @@ import {
   InsufficientStockError,
   OrderNotFoundException,
   InvalidOrderStatusTransitionError,
+  CustomerNotFoundException,
 } from '@domain/index';
 
 /**
@@ -63,6 +64,10 @@ const errorMap = new Map<new (...args: never[]) => DomainError, ErrorMapEntry>([
       message: 'Transição de status inválida para o pedido',
     },
   ],
+  [
+    CustomerNotFoundException,
+    { status: 404, error: 'CustomerNotFoundException', message: 'Cliente não encontrado' },
+  ],
 ]);
 
 /**
@@ -82,7 +87,6 @@ const errorMap = new Map<new (...args: never[]) => DomainError, ErrorMapEntry>([
  */
 export function registerErrorHandler(app: FastifyInstance): void {
   app.setErrorHandler((error: Error, request: FastifyRequest, reply: FastifyReply): void => {
-    // ── Path 1: Known domain errors ──────────────────────────────────────
     if (error instanceof DomainError) {
       const entry = errorMap.get(error.constructor as new (...args: never[]) => DomainError);
 
@@ -94,7 +98,6 @@ export function registerErrorHandler(app: FastifyInstance): void {
         return;
       }
 
-      // Unmapped DomainError subclass — treat as internal (defensive).
       request.log.error({ err: error }, 'Unmapped DomainError encountered');
       reply.status(500).send({
         error: 'InternalServerError',
@@ -103,7 +106,6 @@ export function registerErrorHandler(app: FastifyInstance): void {
       return;
     }
 
-    // ── Path 2: Zod validation errors ────────────────────────────────────
     if (error instanceof ZodError) {
       const details: ValidationDetail[] = error.issues.map((issue) => ({
         field: issue.path.join('.') || 'unknown',
@@ -118,8 +120,6 @@ export function registerErrorHandler(app: FastifyInstance): void {
       return;
     }
 
-    // ── Path 3: Unexpected / infrastructure errors ────────────────────────
-    // Log with full stack trace internally — never expose to the client.
     request.log.error({ err: error }, 'Unexpected internal error');
     reply.status(500).send({
       error: 'InternalServerError',

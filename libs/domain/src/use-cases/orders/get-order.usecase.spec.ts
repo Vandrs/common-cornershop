@@ -13,6 +13,7 @@ describe('GetOrderUseCase', () => {
   const buildOrder = (overrides: Partial<Order> = {}): Order =>
     ({
       id: 'order-1',
+      customerId: 'customer-1',
       orderNumber: 'ORD-1711234567890-a3f2',
       status: OrderStatus.PENDING,
       totalAmount: 50.0,
@@ -40,23 +41,18 @@ describe('GetOrderUseCase', () => {
 
   describe('execute', () => {
     it('should return the order when it exists', async () => {
-      // Arrange
       const order = buildOrder();
       mockOrderService.findOrFail.mockResolvedValue(order);
 
-      // Act
       const result = await useCase.execute('order-1');
 
-      // Assert
       expect(result).toEqual(order);
       expect(mockOrderService.findOrFail).toHaveBeenCalledWith('order-1');
     });
 
     it('should throw OrderNotFoundException when the order does not exist', async () => {
-      // Arrange
       mockOrderService.findOrFail.mockRejectedValue(new OrderNotFoundException());
 
-      // Act & Assert
       await expect(useCase.execute('non-existent')).rejects.toThrow(OrderNotFoundException);
       expect(mockOrderService.findOrFail).toHaveBeenCalledWith('non-existent');
     });

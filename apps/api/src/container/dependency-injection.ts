@@ -1,35 +1,30 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 
-// Repository implementations (stubs — will be replaced by TypeORM impls in T4.3)
 import { CategoryRepositoryImpl } from '../repositories/category.repository.impl';
 import { ProductRepositoryImpl } from '../repositories/product.repository.impl';
 import { StockRepositoryImpl } from '../repositories/stock.repository.impl';
 import { OrderRepositoryImpl } from '../repositories/order.repository.impl';
 import { OrderItemRepositoryImpl } from '../repositories/order-item.repository.impl';
+import { CustomerRepositoryImpl } from '../repositories/customer.repository.impl';
 
-// Domain services
 import {
   CategoryService,
   ProductService,
   StockService,
   OrderService,
-  // Category use cases
   CreateCategoryUseCase,
   ListCategoriesUseCase,
   GetCategoryUseCase,
   UpdateCategoryUseCase,
   DeleteCategoryUseCase,
-  // Product use cases
   CreateProductUseCase,
   ListProductsUseCase,
   GetProductUseCase,
   UpdateProductUseCase,
   DeleteProductUseCase,
-  // Stock use cases
   GetStockUseCase,
   UpdateStockUseCase,
-  // Order use cases
   CreateOrderUseCase,
   GetOrderUseCase,
   ListOrdersUseCase,
@@ -54,7 +49,6 @@ import {
  * file.
  */
 export function registerDependencies(): void {
-  // ── Repositories ──────────────────────────────────────────────────────────
   container.registerSingleton<CategoryRepositoryImpl>(
     'ICategoryRepository',
     CategoryRepositoryImpl,
@@ -66,14 +60,16 @@ export function registerDependencies(): void {
     'IOrderItemRepository',
     OrderItemRepositoryImpl,
   );
+  container.registerSingleton<CustomerRepositoryImpl>(
+    'ICustomerRepository',
+    CustomerRepositoryImpl,
+  );
 
-  // ── Services ──────────────────────────────────────────────────────────────
   container.registerSingleton<CategoryService>('CategoryService', CategoryService);
   container.registerSingleton<ProductService>('ProductService', ProductService);
   container.registerSingleton<StockService>('StockService', StockService);
   container.registerSingleton<OrderService>('OrderService', OrderService);
 
-  // ── Use Cases — Category ──────────────────────────────────────────────────
   container.registerSingleton<CreateCategoryUseCase>(
     'CreateCategoryUseCase',
     CreateCategoryUseCase,
@@ -92,18 +88,15 @@ export function registerDependencies(): void {
     DeleteCategoryUseCase,
   );
 
-  // ── Use Cases — Product ───────────────────────────────────────────────────
   container.registerSingleton<CreateProductUseCase>('CreateProductUseCase', CreateProductUseCase);
   container.registerSingleton<ListProductsUseCase>('ListProductsUseCase', ListProductsUseCase);
   container.registerSingleton<GetProductUseCase>('GetProductUseCase', GetProductUseCase);
   container.registerSingleton<UpdateProductUseCase>('UpdateProductUseCase', UpdateProductUseCase);
   container.registerSingleton<DeleteProductUseCase>('DeleteProductUseCase', DeleteProductUseCase);
 
-  // ── Use Cases — Stock ─────────────────────────────────────────────────────
   container.registerSingleton<GetStockUseCase>('GetStockUseCase', GetStockUseCase);
   container.registerSingleton<UpdateStockUseCase>('UpdateStockUseCase', UpdateStockUseCase);
 
-  // ── Use Cases — Order ─────────────────────────────────────────────────────
   container.registerSingleton<CreateOrderUseCase>('CreateOrderUseCase', CreateOrderUseCase);
   container.registerSingleton<GetOrderUseCase>('GetOrderUseCase', GetOrderUseCase);
   container.registerSingleton<ListOrdersUseCase>('ListOrdersUseCase', ListOrdersUseCase);

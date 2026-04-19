@@ -94,6 +94,7 @@ export class OrderRepositoryImpl implements IOrderRepository {
 
       const savedOrder = await orderRepository.save(
         orderRepository.create({
+          customerId: order.customerId,
           orderNumber: order.orderNumber,
           status: order.status,
           totalAmount: order.totalAmount,

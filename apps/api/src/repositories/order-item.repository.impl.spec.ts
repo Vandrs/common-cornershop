@@ -1,11 +1,12 @@
 import { DataSource, Repository } from 'typeorm';
 
-import { Category, Order, OrderItem, OrderStatus, Product, Stock } from '@domain/index';
+import { Category, Customer, Order, OrderItem, OrderStatus, Product, Stock } from '@domain/index';
 import { OrderItemRepositoryImpl } from './order-item.repository.impl';
 
 describe('OrderItemRepositoryImpl (Integration)', () => {
   let dataSource: DataSource;
   let categoryRepo: Repository<Category>;
+  let customerRepo: Repository<Customer>;
   let productRepo: Repository<Product>;
   let orderRepo: Repository<Order>;
   let orderItemOrmRepo: Repository<OrderItem>;
@@ -30,7 +31,7 @@ describe('OrderItemRepositoryImpl (Integration)', () => {
       username: getRequiredEnv('DB_USER'),
       password: getRequiredEnv('DB_PASSWORD'),
       database: getRequiredEnv('DB_NAME'),
-      entities: [Category, Product, Stock, Order, OrderItem],
+      entities: [Category, Product, Stock, Order, OrderItem, Customer],
       synchronize: true,
       dropSchema: true,
       logging: false,
@@ -40,6 +41,7 @@ describe('OrderItemRepositoryImpl (Integration)', () => {
     await dataSource.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
 
     categoryRepo = dataSource.getRepository(Category);
+    customerRepo = dataSource.getRepository(Customer);
     productRepo = dataSource.getRepository(Product);
     orderRepo = dataSource.getRepository(Order);
     orderItemOrmRepo = dataSource.getRepository(OrderItem);
@@ -55,9 +57,19 @@ describe('OrderItemRepositoryImpl (Integration)', () => {
 
   beforeEach(async () => {
     await dataSource.query(
-      'TRUNCATE TABLE order_items, orders, stocks, products, categories RESTART IDENTITY CASCADE',
+      'TRUNCATE TABLE order_items, orders, customers, stocks, products, categories RESTART IDENTITY CASCADE',
     );
   });
+
+  const createCustomer = async (): Promise<Customer> => {
+    return customerRepo.save(
+      customerRepo.create({
+        name: `Customer-${Date.now()}-${Math.random()}`,
+        email: `customer-${Date.now()}-${Math.floor(Math.random() * 10000)}@test.com`,
+        phone: `${Date.now()}${Math.floor(Math.random() * 1000)}`,
+      }),
+    );
+  };
 
   const createCategory = async (): Promise<Category> => {
     return categoryRepo.save(
@@ -82,8 +94,11 @@ describe('OrderItemRepositoryImpl (Integration)', () => {
   };
 
   const createOrder = async (): Promise<Order> => {
+    const customer = await createCustomer();
+
     return orderRepo.save(
       orderRepo.create({
+        customerId: customer.id,
         orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         status: OrderStatus.PENDING,
         totalAmount: 0,

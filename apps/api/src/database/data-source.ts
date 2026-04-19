@@ -5,6 +5,7 @@ import { Product } from '@domain/entities/product.entity';
 import { Stock } from '@domain/entities/stock.entity';
 import { Order } from '@domain/entities/order.entity';
 import { OrderItem } from '@domain/entities/order-item.entity';
+import { Customer } from '@domain/entities/customer.entity';
 
 import { getDatabaseConfig } from '../config/database.config';
 
@@ -15,7 +16,7 @@ import { getDatabaseConfig } from '../config/database.config';
  * project runs inside an NX monorepo where glob paths are not reliably
  * resolved by the TypeORM CLI or the compiled output.
  */
-const ENTITIES = [Category, Product, Stock, Order, OrderItem];
+const ENTITIES = [Category, Product, Stock, Order, OrderItem, Customer];
 
 const dbConfig = getDatabaseConfig();
 

@@ -16,6 +16,7 @@ describe('CancelOrderUseCase', () => {
   const buildOrder = (overrides: Partial<Order> = {}): Order =>
     ({
       id: 'order-1',
+      customerId: 'customer-1',
       orderNumber: 'ORD-1711234567890-a3f2',
       status: OrderStatus.PENDING,
       totalAmount: 50.0,
@@ -50,7 +51,6 @@ describe('CancelOrderUseCase', () => {
 
   describe('execute', () => {
     it('should cancel a PENDING order successfully', async () => {
-      // Arrange
       const pendingOrder = buildOrder({ status: OrderStatus.PENDING });
       const cancelledOrder = buildOrder({ status: OrderStatus.CANCELLED });
 
@@ -58,10 +58,8 @@ describe('CancelOrderUseCase', () => {
       mockOrderService.validateStatusTransition.mockReturnValue(undefined);
       mockOrderRepository.updateStatus.mockResolvedValue(cancelledOrder);
 
-      // Act
       const result = await useCase.execute('order-1');
 
-      // Assert
       expect(result).toEqual(cancelledOrder);
       expect(mockOrderService.findOrFail).toHaveBeenCalledWith('order-1');
       expect(mockOrderService.validateStatusTransition).toHaveBeenCalledWith(
@@ -75,7 +73,6 @@ describe('CancelOrderUseCase', () => {
     });
 
     it('should cancel a PROCESSING order successfully', async () => {
-      // Arrange
       const processingOrder = buildOrder({ status: OrderStatus.PROCESSING });
       const cancelledOrder = buildOrder({ status: OrderStatus.CANCELLED });
 
@@ -83,10 +80,8 @@ describe('CancelOrderUseCase', () => {
       mockOrderService.validateStatusTransition.mockReturnValue(undefined);
       mockOrderRepository.updateStatus.mockResolvedValue(cancelledOrder);
 
-      // Act
       const result = await useCase.execute('order-1');
 
-      // Assert
       expect(result).toEqual(cancelledOrder);
       expect(mockOrderService.validateStatusTransition).toHaveBeenCalledWith(
         OrderStatus.PROCESSING,
@@ -99,17 +94,14 @@ describe('CancelOrderUseCase', () => {
     });
 
     it('should throw OrderNotFoundException when the order does not exist', async () => {
-      // Arrange
       mockOrderService.findOrFail.mockRejectedValue(new OrderNotFoundException());
 
-      // Act & Assert
       await expect(useCase.execute('non-existent')).rejects.toThrow(OrderNotFoundException);
       expect(mockOrderService.validateStatusTransition).not.toHaveBeenCalled();
       expect(mockOrderRepository.updateStatus).not.toHaveBeenCalled();
     });
 
     it('should throw InvalidOrderStatusTransitionError when the order is already COMPLETED', async () => {
-      // Arrange
       const completedOrder = buildOrder({ status: OrderStatus.COMPLETED });
 
       mockOrderService.findOrFail.mockResolvedValue(completedOrder);
@@ -117,13 +109,11 @@ describe('CancelOrderUseCase', () => {
         throw new InvalidOrderStatusTransitionError(OrderStatus.COMPLETED, OrderStatus.CANCELLED);
       });
 
-      // Act & Assert
       await expect(useCase.execute('order-1')).rejects.toThrow(InvalidOrderStatusTransitionError);
       expect(mockOrderRepository.updateStatus).not.toHaveBeenCalled();
     });
 
     it('should throw InvalidOrderStatusTransitionError when the order is already CANCELLED', async () => {
-      // Arrange
       const cancelledOrder = buildOrder({ status: OrderStatus.CANCELLED });
 
       mockOrderService.findOrFail.mockResolvedValue(cancelledOrder);
@@ -131,13 +121,11 @@ describe('CancelOrderUseCase', () => {
         throw new InvalidOrderStatusTransitionError(OrderStatus.CANCELLED, OrderStatus.CANCELLED);
       });
 
-      // Act & Assert
       await expect(useCase.execute('order-1')).rejects.toThrow(InvalidOrderStatusTransitionError);
       expect(mockOrderRepository.updateStatus).not.toHaveBeenCalled();
     });
 
     it('should always pass CANCELLED as the target status to validateStatusTransition', async () => {
-      // Arrange
       const pendingOrder = buildOrder({ status: OrderStatus.PENDING });
       mockOrderService.findOrFail.mockResolvedValue(pendingOrder);
       mockOrderService.validateStatusTransition.mockReturnValue(undefined);
@@ -145,10 +133,8 @@ describe('CancelOrderUseCase', () => {
         buildOrder({ status: OrderStatus.CANCELLED }),
       );
 
-      // Act
       await useCase.execute('order-1');
 
-      // Assert
       expect(mockOrderService.validateStatusTransition).toHaveBeenCalledWith(
         expect.any(String),
         OrderStatus.CANCELLED,

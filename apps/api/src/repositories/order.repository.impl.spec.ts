@@ -1,6 +1,6 @@
 import { DataSource, Repository } from 'typeorm';
 
-import { Category, Order, OrderItem, OrderStatus, Product, Stock } from '@domain/index';
+import { Category, Customer, Order, OrderItem, OrderStatus, Product, Stock } from '@domain/index';
 
 import { OrderRepositoryImpl } from './order.repository.impl';
 
@@ -8,6 +8,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
   let dataSource: DataSource;
   let categoryRepo: Repository<Category>;
   let productRepo: Repository<Product>;
+  let customerRepo: Repository<Customer>;
   let orderOrmRepo: Repository<Order>;
   let orderItemOrmRepo: Repository<OrderItem>;
 
@@ -31,7 +32,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
       username: getRequiredEnv('DB_USER'),
       password: getRequiredEnv('DB_PASSWORD'),
       database: getRequiredEnv('DB_NAME'),
-      entities: [Category, Product, Stock, Order, OrderItem],
+      entities: [Category, Product, Stock, Order, OrderItem, Customer],
       synchronize: true,
       dropSchema: true,
       logging: false,
@@ -42,6 +43,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
 
     categoryRepo = dataSource.getRepository(Category);
     productRepo = dataSource.getRepository(Product);
+    customerRepo = dataSource.getRepository(Customer);
     orderOrmRepo = dataSource.getRepository(Order);
     orderItemOrmRepo = dataSource.getRepository(OrderItem);
 
@@ -56,9 +58,19 @@ describe('OrderRepositoryImpl (Integration)', () => {
 
   beforeEach(async () => {
     await dataSource.query(
-      'TRUNCATE TABLE order_items, orders, stocks, products, categories RESTART IDENTITY CASCADE',
+      'TRUNCATE TABLE order_items, orders, customers, stocks, products, categories RESTART IDENTITY CASCADE',
     );
   });
+
+  const createCustomer = async (): Promise<Customer> => {
+    return customerRepo.save(
+      customerRepo.create({
+        name: `Customer-${Date.now()}-${Math.random()}`,
+        email: `customer-${Date.now()}-${Math.floor(Math.random() * 10000)}@test.com`,
+        phone: `${Date.now()}${Math.floor(Math.random() * 1000)}`,
+      }),
+    );
+  };
 
   const createCategory = async (): Promise<Category> => {
     return categoryRepo.save(
@@ -82,8 +94,14 @@ describe('OrderRepositoryImpl (Integration)', () => {
     );
   };
 
-  const createOrderEntity = (orderNumber: string, status: OrderStatus, totalAmount = 0): Order => {
+  const createOrderEntity = (
+    customerId: string,
+    orderNumber: string,
+    status: OrderStatus,
+    totalAmount = 0,
+  ): Order => {
     const order = new Order();
+    order.customerId = customerId;
     order.orderNumber = orderNumber;
     order.status = status;
     order.totalAmount = totalAmount;
@@ -108,9 +126,10 @@ describe('OrderRepositoryImpl (Integration)', () => {
     it('should return order with items for active order', async () => {
       const category = await createCategory();
       const product = await createProduct(category.id);
+      const customer = await createCustomer();
 
       const createdOrder = await repository.createWithItems(
-        createOrderEntity(`ORD-${Date.now()}-find`, OrderStatus.PENDING, 20),
+        createOrderEntity(customer.id, `ORD-${Date.now()}-find`, OrderStatus.PENDING, 20),
         [createOrderItemEntity(product.id, 2, 10, 20)],
       );
 
@@ -125,6 +144,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
     it('should not return soft-deleted order', async () => {
       const savedOrder = await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: (await createCustomer()).id,
           orderNumber: `ORD-${Date.now()}-soft-deleted`,
           status: OrderStatus.PENDING,
           totalAmount: 0,
@@ -141,8 +161,10 @@ describe('OrderRepositoryImpl (Integration)', () => {
 
   describe('list', () => {
     it('should apply filters and return paginated result metadata', async () => {
+      const customer = await createCustomer();
       const orderA = await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: customer.id,
           orderNumber: `ORD-${Date.now()}-A`,
           status: OrderStatus.PENDING,
           totalAmount: 100,
@@ -150,6 +172,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
       );
       const orderB = await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: customer.id,
           orderNumber: `ORD-${Date.now()}-B`,
           status: OrderStatus.PENDING,
           totalAmount: 120,
@@ -157,6 +180,7 @@ describe('OrderRepositoryImpl (Integration)', () => {
       );
       await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: customer.id,
           orderNumber: `ORD-${Date.now()}-C`,
           status: OrderStatus.COMPLETED,
           totalAmount: 200,
@@ -204,8 +228,10 @@ describe('OrderRepositoryImpl (Integration)', () => {
     });
 
     it('should not include soft-deleted orders in list', async () => {
+      const customer = await createCustomer();
       const order = await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: customer.id,
           orderNumber: `ORD-${Date.now()}-deleted-list`,
           status: OrderStatus.PENDING,
           totalAmount: 10,
@@ -226,9 +252,10 @@ describe('OrderRepositoryImpl (Integration)', () => {
       const category = await createCategory();
       const productA = await createProduct(category.id, 12);
       const productB = await createProduct(category.id, 8);
+      const customer = await createCustomer();
 
       const result = await repository.createWithItems(
-        createOrderEntity(`ORD-${Date.now()}-tx-ok`, OrderStatus.PENDING, 28),
+        createOrderEntity(customer.id, `ORD-${Date.now()}-tx-ok`, OrderStatus.PENDING, 28),
         [
           createOrderItemEntity(productA.id, 1, 12, 12),
           createOrderItemEntity(productB.id, 2, 8, 16),
@@ -248,11 +275,12 @@ describe('OrderRepositoryImpl (Integration)', () => {
     it('should rollback entire transaction when item persistence fails', async () => {
       const category = await createCategory();
       const validProduct = await createProduct(category.id, 15);
+      const customer = await createCustomer();
       const invalidProductId = '00000000-0000-0000-0000-000000000000';
 
       await expect(
         repository.createWithItems(
-          createOrderEntity(`ORD-${Date.now()}-tx-fail`, OrderStatus.PENDING, 30),
+          createOrderEntity(customer.id, `ORD-${Date.now()}-tx-fail`, OrderStatus.PENDING, 30),
           [
             createOrderItemEntity(validProduct.id, 1, 15, 15),
             createOrderItemEntity(invalidProductId, 1, 15, 15),
@@ -270,8 +298,10 @@ describe('OrderRepositoryImpl (Integration)', () => {
 
   describe('updateStatus', () => {
     it('should update order status for active order', async () => {
+      const customer = await createCustomer();
       const order = await orderOrmRepo.save(
         orderOrmRepo.create({
+          customerId: customer.id,
           orderNumber: `ORD-${Date.now()}-status`,
           status: OrderStatus.PENDING,
           totalAmount: 0,
