@@ -13,6 +13,7 @@ import {
   ProductService,
   StockService,
   OrderService,
+  CustomerService,
   CreateCategoryUseCase,
   ListCategoriesUseCase,
   GetCategoryUseCase,
@@ -30,6 +31,8 @@ import {
   ListOrdersUseCase,
   UpdateOrderStatusUseCase,
   CancelOrderUseCase,
+  CreateCustomerUseCase,
+  GetCustomerUseCase,
 } from '@domain/index';
 
 /**
@@ -69,6 +72,7 @@ export function registerDependencies(): void {
   container.registerSingleton<ProductService>('ProductService', ProductService);
   container.registerSingleton<StockService>('StockService', StockService);
   container.registerSingleton<OrderService>('OrderService', OrderService);
+  container.registerSingleton<CustomerService>('CustomerService', CustomerService);
 
   container.registerSingleton<CreateCategoryUseCase>(
     'CreateCategoryUseCase',
@@ -105,4 +109,10 @@ export function registerDependencies(): void {
     UpdateOrderStatusUseCase,
   );
   container.registerSingleton<CancelOrderUseCase>('CancelOrderUseCase', CancelOrderUseCase);
+
+  container.registerSingleton<CreateCustomerUseCase>(
+    'CreateCustomerUseCase',
+    CreateCustomerUseCase,
+  );
+  container.registerSingleton<GetCustomerUseCase>('GetCustomerUseCase', GetCustomerUseCase);
 }

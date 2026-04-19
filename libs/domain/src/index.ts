@@ -15,6 +15,7 @@ export { InsufficientStockError } from './errors/insufficient-stock.error';
 export { OrderNotFoundException } from './errors/order-not-found.error';
 export { InvalidOrderStatusTransitionError } from './errors/invalid-order-status-transition.error';
 export { CustomerNotFoundException } from './errors/customer-not-found.error';
+export { CustomerAlreadyExistsException } from './errors/customer-already-exists.error';
 
 export type { ICategoryRepository, CategoryListParams } from './repositories/category.repository';
 export type { IProductRepository, ProductListParams } from './repositories/product.repository';
@@ -29,6 +30,8 @@ export { ProductService } from './services/product.service';
 export { StockService } from './services/stock.service';
 export { OrderService } from './services/order.service';
 export type { CreateOrderItemDTO, OrderItemData } from './services/order.service';
+export { CustomerService } from './services/customer.service';
+export type { CreateCustomerDTO } from './services/customer.service';
 
 export { CreateCategoryUseCase } from './use-cases/category/create-category.usecase';
 export { ListCategoriesUseCase } from './use-cases/category/list-categories.usecase';
@@ -57,3 +60,6 @@ export { ListOrdersUseCase } from './use-cases/orders/list-orders.usecase';
 export { UpdateOrderStatusUseCase } from './use-cases/orders/update-order-status.usecase';
 export type { UpdateOrderStatusDTO } from './use-cases/orders/update-order-status.usecase';
 export { CancelOrderUseCase } from './use-cases/orders/cancel-order.usecase';
+
+export { CreateCustomerUseCase } from './use-cases/customer/create-customer.usecase';
+export { GetCustomerUseCase } from './use-cases/customer/get-customer.usecase';

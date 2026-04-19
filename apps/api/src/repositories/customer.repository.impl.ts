@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import { DataSource, IsNull, Repository } from 'typeorm';
 
+import { CustomerAlreadyExistsException } from '@domain/errors/customer-already-exists.error';
 import { Customer } from '@domain/entities/customer.entity';
 import { ICustomerRepository } from '@domain/repositories/customer.repository';
 
@@ -35,7 +36,20 @@ export class CustomerRepositoryImpl implements ICustomerRepository {
   }
 
   async save(customer: Customer): Promise<Customer> {
-    return this.repository.save(customer);
+    try {
+      return await this.repository.save(customer);
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (error as { code?: string }).code === '23505'
+      ) {
+        throw new CustomerAlreadyExistsException();
+      }
+
+      throw error;
+    }
   }
 
   async softDelete(id: string): Promise<void> {
