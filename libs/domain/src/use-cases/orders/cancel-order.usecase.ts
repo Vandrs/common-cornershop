@@ -2,7 +2,9 @@ import { injectable, inject } from 'tsyringe';
 
 import { Order } from '../../entities/order.entity';
 import { OrderStatus } from '../../enums/order-status.enum';
+import { IOrderItemRepository } from '../../repositories/order-item.repository';
 import { IOrderRepository } from '../../repositories/order.repository';
+import { IStockRepository } from '../../repositories/stock.repository';
 import { OrderService } from '../../services/order.service';
 
 /**
@@ -17,6 +19,10 @@ export class CancelOrderUseCase {
   constructor(
     @inject('IOrderRepository')
     private readonly orderRepository: IOrderRepository,
+    @inject('IOrderItemRepository')
+    private readonly orderItemRepository: IOrderItemRepository,
+    @inject('IStockRepository')
+    private readonly stockRepository: IStockRepository,
     @inject('OrderService')
     private readonly orderService: OrderService,
   ) {}
@@ -33,6 +39,14 @@ export class CancelOrderUseCase {
     const order = await this.orderService.findOrFail(id);
 
     this.orderService.validateStatusTransition(order.status, OrderStatus.CANCELLED);
+
+    if (order.status === OrderStatus.PROCESSING) {
+      const orderItems = await this.orderItemRepository.findByOrderId(order.id);
+
+      for (const item of orderItems) {
+        await this.stockRepository.adjustQuantity(item.productId, item.quantity);
+      }
+    }
 
     return this.orderRepository.updateStatus(id, OrderStatus.CANCELLED);
   }
