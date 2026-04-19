@@ -90,6 +90,7 @@ export class OrderController {
     const body = createOrderBodySchema.parse(request.body) as CreateOrderBodySchema;
 
     const order = await this.createOrderUseCase.execute({
+      customerId: body.customerId,
       items: body.items,
     });
 

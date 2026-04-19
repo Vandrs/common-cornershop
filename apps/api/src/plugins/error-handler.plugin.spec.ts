@@ -7,6 +7,7 @@ import {
   InsufficientStockError,
   OrderNotFoundException,
   InvalidOrderStatusTransitionError,
+  CustomerNotFoundException,
 } from '@domain/index';
 import { OrderStatus } from '@domain/enums/order-status.enum';
 
@@ -34,13 +35,10 @@ async function buildApp(throwFn: () => Error): Promise<FastifyInstance> {
 describe('registerErrorHandler', () => {
   describe('when a mapped DomainError is thrown', () => {
     it('maps ProductNotFoundException to 404 with correct envelope', async () => {
-      // Arrange
       const app = await buildApp(() => new ProductNotFoundException());
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(404);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -52,13 +50,10 @@ describe('registerErrorHandler', () => {
     });
 
     it('maps CategoryNotFoundException to 404 with correct envelope', async () => {
-      // Arrange
       const app = await buildApp(() => new CategoryNotFoundException());
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(404);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -68,13 +63,10 @@ describe('registerErrorHandler', () => {
     });
 
     it('maps InsufficientStockError to 400 with correct envelope', async () => {
-      // Arrange
       const app = await buildApp(() => new InsufficientStockError('Coca-Cola 2L'));
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(400);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -84,13 +76,10 @@ describe('registerErrorHandler', () => {
     });
 
     it('maps OrderNotFoundException to 404 with correct envelope', async () => {
-      // Arrange
       const app = await buildApp(() => new OrderNotFoundException());
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(404);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -99,16 +88,26 @@ describe('registerErrorHandler', () => {
       });
     });
 
+    it('maps CustomerNotFoundException to 404 with correct envelope', async () => {
+      const app = await buildApp(() => new CustomerNotFoundException());
+
+      const response = await app.inject({ method: 'GET', url: '/test' });
+
+      expect(response.statusCode).toBe(404);
+      const body = JSON.parse(response.body);
+      expect(body).toEqual({
+        error: 'CustomerNotFoundException',
+        message: 'Cliente não encontrado',
+      });
+    });
+
     it('maps InvalidOrderStatusTransitionError to 400 with correct envelope', async () => {
-      // Arrange
       const app = await buildApp(
         () => new InvalidOrderStatusTransitionError(OrderStatus.COMPLETED, OrderStatus.PENDING),
       );
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(400);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -118,13 +117,10 @@ describe('registerErrorHandler', () => {
     });
 
     it('does not expose stack trace for domain errors', async () => {
-      // Arrange
       const app = await buildApp(() => new ProductNotFoundException());
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       const body = JSON.parse(response.body);
       expect(body).not.toHaveProperty('stack');
       expect(JSON.stringify(body)).not.toContain('at ');
@@ -133,7 +129,6 @@ describe('registerErrorHandler', () => {
 
   describe('when a ZodError is thrown', () => {
     it('returns 400 with ValidationError envelope and details array', async () => {
-      // Arrange
       const schema = z.object({
         items: z.array(z.object({ quantity: z.number().int().positive() })).min(1),
       });
@@ -144,10 +139,8 @@ describe('registerErrorHandler', () => {
         return new Error('should not reach here');
       });
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(400);
       const body = JSON.parse(response.body);
       expect(body.error).toBe('ValidationError');
@@ -159,7 +152,6 @@ describe('registerErrorHandler', () => {
     });
 
     it('includes path-based field names in details', async () => {
-      // Arrange
       const schema = z.object({ name: z.string().min(1) });
       const app = await buildApp(() => {
         const result = schema.safeParse({ name: '' });
@@ -167,17 +159,14 @@ describe('registerErrorHandler', () => {
         return new Error('should not reach here');
       });
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       const body = JSON.parse(response.body);
       const nameDetail = body.details.find((d: { field: string }) => d.field === 'name');
       expect(nameDetail).toBeDefined();
     });
 
     it('does not expose stack trace for ZodErrors', async () => {
-      // Arrange
       const schema = z.object({ id: z.string().uuid() });
       const app = await buildApp(() => {
         const result = schema.safeParse({ id: 'not-a-uuid' });
@@ -185,10 +174,8 @@ describe('registerErrorHandler', () => {
         return new Error('should not reach here');
       });
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       const body = JSON.parse(response.body);
       expect(body).not.toHaveProperty('stack');
     });
@@ -196,13 +183,10 @@ describe('registerErrorHandler', () => {
 
   describe('when an unexpected / generic error is thrown', () => {
     it('returns 500 with InternalServerError envelope', async () => {
-      // Arrange
       const app = await buildApp(() => new Error('Something went wrong internally'));
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(500);
       const body = JSON.parse(response.body);
       expect(body).toEqual({
@@ -212,14 +196,11 @@ describe('registerErrorHandler', () => {
     });
 
     it('does not expose the internal error message or stack trace', async () => {
-      // Arrange
       const sensitiveMessage = 'DB connection string: postgresql://user:secret@host/db';
       const app = await buildApp(() => new Error(sensitiveMessage));
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       expect(response.statusCode).toBe(500);
       const rawBody = response.body;
       expect(rawBody).not.toContain(sensitiveMessage);
@@ -228,13 +209,10 @@ describe('registerErrorHandler', () => {
     });
 
     it('does not include statusCode in the response body', async () => {
-      // Arrange
       const app = await buildApp(() => new Error('generic'));
 
-      // Act
       const response = await app.inject({ method: 'GET', url: '/test' });
 
-      // Assert
       const body = JSON.parse(response.body);
       expect(body).not.toHaveProperty('statusCode');
     });

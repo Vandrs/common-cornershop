@@ -3,7 +3,9 @@ import { injectable, inject } from 'tsyringe';
 import { Order } from '../../entities/order.entity';
 import { OrderItem } from '../../entities/order-item.entity';
 import { OrderStatus } from '../../enums/order-status.enum';
+import { CustomerNotFoundException } from '../../errors/customer-not-found.error';
 import { ProductNotFoundException } from '../../errors/product-not-found.error';
+import { ICustomerRepository } from '../../repositories/customer.repository';
 import { IOrderRepository } from '../../repositories/order.repository';
 import { IProductRepository } from '../../repositories/product.repository';
 import { OrderService, CreateOrderItemDTO } from '../../services/order.service';
@@ -13,6 +15,8 @@ import { StockService } from '../../services/stock.service';
  * Input data required to create a new order.
  */
 export interface CreateOrderDTO {
+  /** UUID of the customer placing the order. */
+  customerId: string;
   /** List of items to include in the order. Must contain at least one item. */
   items: CreateOrderItemDTO[];
 }
@@ -29,6 +33,8 @@ export class CreateOrderUseCase {
   constructor(
     @inject('IOrderRepository')
     private readonly orderRepository: IOrderRepository,
+    @inject('ICustomerRepository')
+    private readonly customerRepository: ICustomerRepository,
     @inject('IProductRepository')
     private readonly productRepository: IProductRepository,
     @inject('StockService')
@@ -46,39 +52,40 @@ export class CreateOrderUseCase {
    * @throws {InsufficientStockError} When available stock is below the requested quantity for any item.
    */
   async execute(dto: CreateOrderDTO): Promise<Order> {
+    const customer = await this.customerRepository.findById(dto.customerId);
+
+    if (!customer) {
+      throw new CustomerNotFoundException();
+    }
+
     const productIds = dto.items.map((item) => item.productId);
     const products = await this.productRepository.findByIds(productIds);
 
-    // Validate all products exist
     const productMap = new Map(products.map((p) => [p.id, p]));
     for (const item of dto.items) {
       const product = productMap.get(item.productId);
       if (!product) {
         throw new ProductNotFoundException();
       }
-      // Validate product is active
       if (!product.isActive) {
         throw new ProductNotFoundException();
       }
     }
 
-    // Validate stock for each item
     for (const item of dto.items) {
       await this.stockService.validateSufficientStock(item.productId, item.quantity);
     }
 
-    // Calculate price snapshots and subtotals
     const orderItemsData = this.orderService.calculateOrderItems(dto.items, products);
     const totalAmount = this.orderService.calculateTotal(orderItemsData);
     const orderNumber = this.orderService.generateOrderNumber();
 
-    // Build Order entity
     const order = new Order();
+    order.customerId = dto.customerId;
     order.orderNumber = orderNumber;
     order.status = OrderStatus.PENDING;
     order.totalAmount = totalAmount;
 
-    // Build OrderItem entities
     const orderItems = orderItemsData.map((data) => {
       const item = new OrderItem();
       item.productId = data.productId;
