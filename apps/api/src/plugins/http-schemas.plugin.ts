@@ -3,10 +3,14 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import {
   categoryNotFoundResponseSchema,
-  customerNotFoundResponseSchema,
   categoryParamsSchema,
+  createCustomerBodySchema,
   createOrderBodySchema,
   createOrderResponseSchema,
+  customerAlreadyExistsResponseSchema,
+  customerNotFoundResponseSchema,
+  customerParamsSchema,
+  customerResponseSchema,
   getCategoryResponseSchema,
   getOrderResponseSchema,
   getOrderStatusResponseSchema,
@@ -48,6 +52,12 @@ const SCHEMA_REGISTRY: RegisteredZodSchema[] = [
   { id: 'ProductNotFoundResponse', schema: productNotFoundResponseSchema },
   { id: 'ProductNotFoundByIdResponse', schema: productNotFoundByIdResponseSchema },
 
+  { id: 'CustomersCreateBody', schema: createCustomerBodySchema },
+  { id: 'CustomersParams', schema: customerParamsSchema },
+  { id: 'CustomerResponse', schema: customerResponseSchema },
+  { id: 'CustomerNotFoundResponse', schema: customerNotFoundResponseSchema },
+  { id: 'CustomerAlreadyExistsResponse', schema: customerAlreadyExistsResponseSchema },
+
   { id: 'OrdersCreateBody', schema: createOrderBodySchema },
   { id: 'OrdersParams', schema: orderParamsSchema },
   { id: 'OrdersListQuery', schema: listOrdersQuerySchema },
@@ -57,7 +67,6 @@ const SCHEMA_REGISTRY: RegisteredZodSchema[] = [
   { id: 'OrderStatusResponse', schema: getOrderStatusResponseSchema },
   { id: 'OrdersListResponse', schema: listOrdersResponseSchema },
   { id: 'OrderNotFoundResponse', schema: orderNotFoundResponseSchema },
-  { id: 'CustomerNotFoundResponse', schema: customerNotFoundResponseSchema },
   { id: 'InsufficientStockResponse', schema: insufficientStockResponseSchema },
   { id: 'InsufficientStockDetailedResponse', schema: insufficientStockDetailedResponseSchema },
 

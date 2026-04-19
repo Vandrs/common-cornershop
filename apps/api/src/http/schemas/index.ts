@@ -16,7 +16,21 @@ export type {
 } from './categories.schema';
 
 export {
+  createCustomerBodySchema,
+  customerAlreadyExistsResponseSchema,
   customerNotFoundResponseSchema,
+  customerParamsSchema,
+  customerResponseSchema,
+} from './customers.schema';
+export type {
+  CreateCustomerBodySchema,
+  CustomerAlreadyExistsResponseSchema,
+  CustomerNotFoundResponseSchema,
+  CustomerParamsSchema,
+  CustomerResponseSchema,
+} from './customers.schema';
+
+export {
   createOrderBodySchema,
   createOrderResponseSchema,
   getOrderResponseSchema,
@@ -31,7 +45,6 @@ export {
   updateOrderStatusBodySchema,
 } from './orders.schema';
 export type {
-  CustomerNotFoundResponseSchema,
   CreateOrderBodySchema,
   CreateOrderResponseSchema,
   GetOrderResponseSchema,
