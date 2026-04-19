@@ -188,3 +188,18 @@ When multiple agents run simultaneously and each creates a new git branch, a rac
 2. Before committing, always assert: `git branch --show-current` returns the expected branch name.
 3. If branches must be created in parallel, prefer having each agent do `git checkout -b <branch> main` from a clean state, and validate with `git status` before staging files.
 4. Never assume the working branch is correct — always verify programmatically.
+
+
+## Test Environment Setup (Integration & E2E)
+
+Integration and E2E tests require a running PostgreSQL instance and a `.env.test` file at the repo root.
+
+See [`docs/testing.md` — Ambiente de Testes](docs/testing.md#ambiente-de-testes) for the required `.env.test` content and full setup instructions.
+
+Verify the Podman test container is running before executing integration tests:
+
+```bash
+podman ps --filter name=cornershop-test-db
+```
+
+> **Important for agents:** Always verify `.env.test` exists and the test container is running before executing `yarn test:integration` or `yarn test:e2e`. Failing to do so will result in misleading errors like `Missing required test environment variable: DB_PASSWORD`.

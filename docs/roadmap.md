@@ -35,7 +35,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase 3 — API Layer        | Semana 2–3       | ✅ Concluída |
 | Fase 4 — Quality          | Semana 3–4       | ✅ Concluída |
 | Fase 5 — DevOps Final     | Semana 4         | ⏸️ Em espera |
-| Fase 6 — Pós-MVP Qualidade Técnica | — | 🔄 Em andamento |
+| Fase 6 — Pós-MVP Qualidade Técnica | — | ✅ Concluída |
 | Fase 7 — Customer & Stock Side-effects | — | 🔄 Em andamento |
 
 ---
@@ -325,7 +325,7 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 
 | ID   | Issue |                                                                                                              Título | Estimativa | Prioridade | Status         | Link                                                         |
 | ---- | ----- | ------------------------------------------------------------------------------------------------------------------: | ---------: | ---------- | -------------- | ------------------------------------------------------------ |
-| T7.1 | #67   | Testes — Corrigir carregamento de .env no Jest e eliminar require() lazy nos specs de repositório |         2h | Média      | 🔄 Em andamento | [#67](https://github.com/Vandrs/common-cornershop/issues/67) |
+| T7.1 | #67   | Testes — Corrigir carregamento de .env no Jest e eliminar require() lazy nos specs de repositório |         2h | Média      | ✅ Concluída | [#67](https://github.com/Vandrs/common-cornershop/issues/67) |
 
 - Critério de conclusão: `yarn test:integration` passa 100% com banco disponível; nenhum `require()` dentro de `beforeAll`; `yarn lint` limpo.
 

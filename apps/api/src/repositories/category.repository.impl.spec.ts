@@ -1,12 +1,10 @@
-import 'reflect-metadata';
-
 import { DataSource } from 'typeorm';
 
 import { Category } from '@domain/entities/category.entity';
 import { OrderItem } from '@domain/entities/order-item.entity';
 import { Order } from '@domain/entities/order.entity';
 import { Product } from '@domain/entities/product.entity';
-import { Stock } from '@domain/entities/stock.entity';
+import { CategoryRepositoryImpl } from './category.repository.impl';
 
 describe('CategoryRepositoryImpl (Integration)', () => {
   let dataSource: DataSource;
@@ -31,10 +29,6 @@ describe('CategoryRepositoryImpl (Integration)', () => {
   };
 
   beforeAll(async () => {
-    const { CategoryRepositoryImpl } =
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      require('./category.repository.impl') as typeof import('./category.repository.impl');
-
     dataSource = new DataSource({
       type: 'postgres',
       host: getRequiredEnv('DB_HOST'),

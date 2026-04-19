@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { randomUUID } from 'crypto';
 
 import { Category } from '@domain/entities/category.entity';
