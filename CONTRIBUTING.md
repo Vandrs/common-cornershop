@@ -31,3 +31,17 @@
 - [ ] Board updated first (canonical state).
 - [ ] If trigger applied, roadmap updated in the same PR (or linked follow-up PR within 24h).
 - [ ] Reviewer validated board ↔ roadmap consistency.
+
+### Operational sync protocol (minimum)
+
+- On implementation start: board -> In Progress; issue remains open.
+- On PR open: board -> Review; issue remains open.
+- On PR merge: close issue + board -> Done; update roadmap status to ✅ Concluída in a docs branch.
+
+#### Hard guards
+
+- Do not close issues before merge.
+- Do not mark Done while PR is open.
+- If roadmap/board diverge, board wins and roadmap must be synced within SLA.
+
+Execution details: docs/agent-runbook.md

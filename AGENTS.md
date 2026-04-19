@@ -190,6 +190,26 @@ When multiple agents run simultaneously and each creates a new git branch, a rac
 4. Never assume the working branch is correct — always verify programmatically.
 
 
+## Autonomous Delivery State Machine (Mandatory)
+
+- Allowed states: `Backlog`, `In Progress`, `Review`, `Done`
+- Valid transitions and triggers:
+  - `Backlog` -> `In Progress` (implementação iniciada)
+  - `In Progress` -> `Review` (PR aberta)
+  - `Review` -> `Done` (PR mergeada + issue fechada)
+- Hard rules:
+  - Nunca fechar issue antes da PR ser mergeada.
+  - Nunca mover board para Done com PR aberta.
+  - Roadmap só recebe ✅ Concluída após merge.
+
+### Parallel implementation requirement
+
+- For parallel tasks: use `git worktree` per task/branch.
+- Verify active branch with `git branch --show-current` before every commit.
+- Do not share a worktree between concurrent agents.
+
+See docs/agent-runbook.md for the operational checklist.
+
 ## Test Environment Setup (Integration & E2E)
 
 Integration and E2E tests require a running PostgreSQL instance and a `.env.test` file at the repo root.
