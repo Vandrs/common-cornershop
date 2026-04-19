@@ -31,8 +31,12 @@ export async function registerOrderRoutes(app: FastifyInstance): Promise<void> {
       body: { $ref: 'OrdersCreateBody#' },
       response: {
         201: { $ref: 'OrdersCreateResponse#' },
-        400: { $ref: 'InsufficientStockResponse#' },
-        404: { $ref: 'ProductNotFoundResponse#' },
+        400: {
+          oneOf: [{ $ref: 'ValidationErrorResponse#' }, { $ref: 'InsufficientStockResponse#' }],
+        },
+        404: {
+          oneOf: [{ $ref: 'ProductNotFoundResponse#' }, { $ref: 'CustomerNotFoundResponse#' }],
+        },
         500: { $ref: 'InternalServerErrorResponse#' },
       },
     },

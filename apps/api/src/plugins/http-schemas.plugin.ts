@@ -3,6 +3,7 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import {
   categoryNotFoundResponseSchema,
+  customerNotFoundResponseSchema,
   categoryParamsSchema,
   createOrderBodySchema,
   createOrderResponseSchema,
@@ -56,6 +57,7 @@ const SCHEMA_REGISTRY: RegisteredZodSchema[] = [
   { id: 'OrderStatusResponse', schema: getOrderStatusResponseSchema },
   { id: 'OrdersListResponse', schema: listOrdersResponseSchema },
   { id: 'OrderNotFoundResponse', schema: orderNotFoundResponseSchema },
+  { id: 'CustomerNotFoundResponse', schema: customerNotFoundResponseSchema },
   { id: 'InsufficientStockResponse', schema: insufficientStockResponseSchema },
   { id: 'InsufficientStockDetailedResponse', schema: insufficientStockDetailedResponseSchema },
 
