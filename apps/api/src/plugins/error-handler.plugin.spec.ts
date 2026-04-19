@@ -8,6 +8,7 @@ import {
   OrderNotFoundException,
   InvalidOrderStatusTransitionError,
   CustomerNotFoundException,
+  CustomerAlreadyExistsException,
 } from '@domain/index';
 import { OrderStatus } from '@domain/enums/order-status.enum';
 
@@ -98,6 +99,19 @@ describe('registerErrorHandler', () => {
       expect(body).toEqual({
         error: 'CustomerNotFoundException',
         message: 'Cliente não encontrado',
+      });
+    });
+
+    it('maps CustomerAlreadyExistsException to 409 with correct envelope', async () => {
+      const app = await buildApp(() => new CustomerAlreadyExistsException());
+
+      const response = await app.inject({ method: 'GET', url: '/test' });
+
+      expect(response.statusCode).toBe(409);
+      const body = JSON.parse(response.body);
+      expect(body).toEqual({
+        error: 'CustomerAlreadyExistsException',
+        message: 'Cliente já cadastrado',
       });
     });
 

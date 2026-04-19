@@ -9,6 +9,7 @@ import {
   OrderNotFoundException,
   InvalidOrderStatusTransitionError,
   CustomerNotFoundException,
+  CustomerAlreadyExistsException,
 } from '@domain/index';
 
 /**
@@ -67,6 +68,10 @@ const errorMap = new Map<new (...args: never[]) => DomainError, ErrorMapEntry>([
   [
     CustomerNotFoundException,
     { status: 404, error: 'CustomerNotFoundException', message: 'Cliente não encontrado' },
+  ],
+  [
+    CustomerAlreadyExistsException,
+    { status: 409, error: 'CustomerAlreadyExistsException', message: 'Cliente já cadastrado' },
   ],
 ]);
 
