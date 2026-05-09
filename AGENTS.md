@@ -189,6 +189,47 @@ When multiple agents run simultaneously and each creates a new git branch, a rac
 3. If branches must be created in parallel, prefer having each agent do `git checkout -b <branch> main` from a clean state, and validate with `git status` before staging files.
 4. Never assume the working branch is correct — always verify programmatically.
 
+### Mandatory branch & commit rule (applies to humans and agents)
+
+- Never commit directly on `main` by default. All work must be done on a feature/fix/docs branch and delivered through a Pull Request.
+- Before every commit (automated or manual), verify the current branch with:
+
+  git branch --show-current
+
+  This check is mandatory for agents and contributors. Automation that performs commits must include an explicit guard that fails the action if the current branch is `main`.
+
+### Exceptions
+
+- An exception to commit on `main` is allowed only when a named stakeholder requests it explicitly and at least one human maintainer approves the request in writing (issue comment, Slack/Email thread, or PR). The approval must be recorded in the related issue or PR.
+- Even with approval, prefer creating a short-lived branch from `main`, applying the change, opening a PR, and merging through the normal flow. Force-pushes to `main` are prohibited unless explicitly authorized by maintainers and accompanied by a rollback plan.
+
+### Recovery procedure (if a commit lands on `main` accidentally)
+
+1. If the commit is local and has NOT been pushed to origin:
+
+   - Create a branch from the current `main` to preserve the work:
+
+     git branch fix/<short-desc>
+
+   - Reset local `main` back to origin/main (safe non-destructive):
+
+     git reset --hard origin/main
+
+   - Checkout the new branch and continue work there:
+
+     git checkout fix/<short-desc>
+
+2. If the commit has been pushed to `origin/main`:
+
+   - Do NOT force-push to rewrite history unless there is explicit, recorded approval from maintainers and the stakeholder. Force-pushing shared history is disruptive.
+   - Immediately notify maintainers (create an issue, tag maintainers, and include the bad commit SHA and a short description).
+   - Create a branch from `origin/main` (which contains the accidental commit), and create a revert PR that either:
+     - Uses `git revert <sha>` to produce a revert commit and PR back into `main`, or
+     - Cherry-picks the intended commits onto a clean branch and open a PR that restores the desired state.
+   - If the accidental commit must be removed urgently and force-push is approved, document the approval in the issue and follow the documented force-push recovery steps (coordinate with CI to avoid automated deployments during the recovery window).
+
+See docs/agent-runbook.md for an operational checklist and step-by-step recovery templates.
+
 
 ## Autonomous Delivery State Machine (Mandatory)
 
