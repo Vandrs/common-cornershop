@@ -1,25 +1,25 @@
 ---
 title: Arquitetura - Bot de Vendas IA (Fluxo Livre)
 date: 2026-04-17
-status: proposed
+status: accepted
 audience: Arquitetura, Liderança
 ---
 
-# Bot de Vendas IA — Arquitetura e Roteiro de Migração (Langflow -> LangChain + LangGraph)
+# Bot de Vendas IA — Arquitetura e Roteiro (LangChain + LangGraph)
 
 ## Resumo executivo
 
-Documento que consolida a decisão de prototipar o Bot de Vendas (fluxo livre) em Langflow e migrar para uma implementação de produção usando LangChain + LangGraph. Foco em decisões arquiteturais, critérios Go/No-Go, guardrails de segurança e de negócio (especialmente para create_order), riscos e plano de fases. Público: arquitetos e liderança. Objetivo: permitir decisão executiva informada e orientar equipes na execução e migração.
+Documento que consolida a decisão de implementar o Bot de Vendas (fluxo livre) diretamente com LangChain + LangGraph, sem uma fase separada de prototipagem com ferramenta low-code. O documento descreve a arquitetura alvo, critérios Go/No-Go, guardrails de segurança e negócio (especialmente para create_order), riscos e plano de fases para validação em staging e rollout controlado em produção. Público-alvo: arquitetos e liderança.
 
 ## Goals e Non-goals
 
 - Goals
-  - Documentar arquitetura alvo e roteiro de migração do protótipo para produção.
+  - Documentar arquitetura alvo e roteiro de implantação direto com LangChain + LangGraph.
   - Definir critérios de governança (Go/No-Go) e métricas operacionais necessárias.
   - Registrar decisões técnicas tomadas e as pendentes.
 
 - Non-goals
-  - Implementar código ou scripts de integração.
+  - Implementar código ou scripts de integração neste documento.
   - Alterar o roadmap oficial do projeto (docs/roadmap.md) — conforme pedido, este arquivo NÃO será alterado.
 
 ## Contexto e restrições (assunções)
@@ -28,15 +28,15 @@ Documento que consolida a decisão de prototipar o Bot de Vendas (fluxo livre) e
 - Canal inicial: Webchat (WhatsApp futuro).
 - Identificação do usuário: código do cliente (ID) já disponível no contexto de sessão.
 - Não há pagamento nesta etapa; todas categorias/produtos disponíveis; linguagem pt-BR informal; sem handoff humano por enquanto.
-- Decisão técnica: protótipo em Langflow; implementação final em LangChain + LangGraph.
+- Decisão técnica: implementação direta com LangChain + LangGraph.
 - Restrições operacionais: sem código executável no documento; compatível com DDD e arquitetura existente.
 
 ## Escopo / Fora de escopo
 
 - Escopo (incluído neste documento)
   - Arquitetura alvo (componentes, responsabilidades).
-  - Plano de fases: protótipo → validação → produção (LangChain + LangGraph).
-  - Critérios Go/No-Go para migrar do protótipo para produção.
+  - Plano de fases: preparação → validação em staging → produção.
+  - Critérios Go/No-Go para migrar para produção.
   - Requisitos obrigatórios do bot: listar categorias, listar produtos por categoria, listar pedidos do usuário, criar pedido, informar status do pedido.
   - Guardrails de create_order: confirmação explícita e idempotência.
 
@@ -48,7 +48,7 @@ Documento que consolida a decisão de prototipar o Bot de Vendas (fluxo livre) e
 ## Arquitetura alvo (alto nível)
 
 Descrição resumida
-: Arquitetura híbrida: componente conversacional (LLM orchestration) diante de serviços existentes do monólito/Domain (API Fastify). O orchestration em produção usa LangChain para fluxo lógico e LangGraph para modelagem de diálogos e decisões, com um Event/Command boundary para operar nas entidades do domínio (Pedido, Produto, Categoria).
+: Arquitetura híbrida: componente conversacional (LLM orchestration) diante de serviços existentes do monólito/Domain (API Fastify). O runtime será self-hosted dentro do monorepo NX (ex.: apps/bot ou libs/orchestration) executando LangChain para orquestração e LangGraph para modelagem de diálogo/decisões. Haverá um Event/Command boundary para operar nas entidades do domínio (Pedido, Produto, Categoria).
 
 Mermaid - Diagrama de componentes (alto nível)
 
@@ -57,18 +57,13 @@ flowchart LR
   User["Usuário - Webchat UI"]
   UI -->|HTTP/WS| Gateway["API Gateway / Webchat Adapter"]
   Gateway -->|REST| API["apps/api - Fastify"]
-  API -->|Command/Event| Orchestrator["LLM Orchestrator"]
+  API -->|Command/Event| Orchestrator["LLM Orchestrator (self-hosted)"]
   Orchestrator -->|invoke| LangChain["LangChain Runtime"]
   LangChain -->|graph| LangGraph["LangGraph (Decision Graph)"]
   Orchestrator -->|Query/Command| Domain["Domain Services (UseCases)"]
   Domain -->|SQL| Postgres["(PostgreSQL via TypeORM)"]
   Orchestrator -->|Audit/Events| Broker["Event Broker (Kafka/Rabbit/Cloud)"]
   Broker -->|consume| Analytics["Analytics / Observability"]
-
-  subgraph Prototype
-    Langflow["Langflow Prototype"]
-  end
-  Langflow -.-> Orchestrator
 ```
 
 Componentes e responsabilidades
@@ -83,8 +78,8 @@ Componentes e responsabilidades
 
 - LLM Orchestrator (runtime)
   - Responsável por orquestrar prompts, extrair intenções e chamar UseCases.
-  - Em protótipo, representado por Langflow (ferramenta low-code visual).
-  - Em produção, executado por LangChain integrando LangGraph para lógica de diálogo.
+  - Implementação decidida: runtime self-hosted dentro do monorepo NX (por exemplo: apps/bot ou libs/orchestration).
+  - Em produção, executado por LangChain integrando LangGraph para lógica de diálogo e invocação de UseCases do domínio.
 
 - LangChain + LangGraph (produção)
   - LangChain: orquestra chamadas a LLMs, ferramentas (retrieval, function-call), controles de contexto e memórias.
@@ -243,41 +238,33 @@ sequenceDiagram
   A->>W: retorna order_789
 ```
 
-## Fases de execução e tabela de ferramentas
+## Fases de execução e ferramentas
 
 Resumo por fases
 
 - Fase 0 — Preparação (infra, métricas, eventos)
-  - Provisionar ambiente de prototipagem, centralizar logs e métricas, definir esquema de eventos e idempotency policy.
+  - Provisionar ambiente, centralizar logs e métricas, definir esquema de eventos e idempotency policy.
 
-- Fase 1 — Protótipo (Langflow)
-  - Objetivo: validar conversa, intents, prompts, UX de confirmação e cobertura de requisitos obrigatórios.
-  - Ferramentas: Langflow (visual), LLM(s) selecionados (OpenAI/Anthropic), Webchat Adapter mínimo.
+- Fase 1 — Validação (LangChain + LangGraph em staging)
+  - Objetivo: provar integração técnica, latências, retrieval augmented generation (RAG) para catálogo, testes de carga e monitoramento.
 
-- Fase 2 — Validação (LangChain + LangGraph em staging)
-  - Objetivo: provar integração técnica, latências, retrival augmented generation (RAG) para catálogo, testes de carga e monitoramento.
+- Fase 2 — Produção (LangChain + LangGraph)
+  - Objetivo: rollout controlado, observabilidade, ML feedback loop e implantação em produção.
 
-- Fase 3 — Produção (LangChain + LangGraph)
-  - Objetivo: rollout controlado, observabilidade, ML feedback loop e migração de consumidores do protótipo.
+Produção (LangChain + LangGraph)
 
-Tabela: Langflow vs LangChain + LangGraph
+- Desenvolvimento: code-first, testável, versão no CI, infraestrutura como código.
+- Observabilidade: métricas, traces, eventos e integração com pipelines de ML feedback.
+- Testes: unit/integration, contract tests e canary releases para validação progressiva.
+- Reusabilidade e segurança: módulos reutilizáveis, melhores controles de secrets e rate-limits.
 
-| Área            | Protótipo (Langflow)                          | Produção (LangChain + LangGraph)                               |
-| --------------- | --------------------------------------------- | -------------------------------------------------------------- |
-| Desenvolvimento | Low-code, rápido para validar prompts e fluxo | Code-first, testável, versão no CI, infraestrutura como código |
-| Observabilidade | Limitada (visual)                             | Métricas, traces, events, observability integrada              |
-| Testes          | Manual / Exploratory                          | Unit/integration + contract tests, canary releases             |
-| Reusabilidade   | Baixa                                         | Alta (chain, tools, graph modules)                             |
-| Segurança       | Menos controles                               | Melhor controle de secrets, rate-limits, authz                 |
-| Custos          | Rápido e barato para protótipo                | Custos operacionais contínuos, mas previsíveis                 |
-
-## Critérios Go / No-Go (migrar do protótipo para produção)
+## Critérios Go / No-Go
 
 Métrica mínima necessária (Go)
 
 - UX e precisão: intent detection >= 90% nas intents obrigatórias (listar categorias/produtos, listar pedidos, create_order, status).
 - Fluxo create_order: taxa de confirmação explícita >= 95% (usuários que confirmam após prompt) e taxa de erro lógico < 2% (pedidos rejeitados por erro do bot).
-- Latência: tempo p/ resposta crítica (confirm prompt + create_order end-to-end) < 2s (ponto) para 95 percentil em staging.
+- Latência: tempo p/ resposta crítica (confirm prompt + create_order end-to-end) < 2s para 95 percentil em staging.
 - Idempotência: 100% de determinismo para requests com mesmo idempotency_token em testes automatizados.
 - Observability: logs estruturados, métricas (intent_accuracy, order_creation_rate, order_creation_failures), traces e alertas configurados.
 - Segurança & Compliance: secrets manager integrado, access controls, PII handling definido (client_id é permitido; dados sensíveis não devem vazar para LLM context).
@@ -287,6 +274,8 @@ No-Go (exemplos)
 - Intent accuracy < 90% nas intents obrigatórias.
 - Falhas repetidas na gravação de pedidos em cenários de retry (idempotency falhando).
 - Ausência de métricas/alertas para erros de criação de pedido.
+
+Nota: sem uma fase de prototipagem separada com ferramentas low-code, a validação dos critérios Go/No-Go será realizada diretamente em ambiente de staging usando LangChain + LangGraph. Recomenda-se: testes automatizados de conversação (golden dataset para intent accuracy), testes de carga para latência p95, e pipelines de avaliação para intent_accuracy.
 
 ## Guardrails específicos para create_order
 
@@ -300,7 +289,7 @@ No-Go (exemplos)
 
 3. Verificações de negócio
    - Validar estoque disponível antes da confirmação final.
-   - Se houver insuficiência, informar categoria/produto e alternativa (ex.: "Tem só 1 disponível; quer comprar 1? ").
+   - Se houver insuficiência, informar categoria/produto e alternativa (ex.: "Tem só 1 disponível; quer comprar 1?").
 
 4. Audit e explicabilidade
    - Registrar prompt/response essenciais, decision graph node utilizado e embeddings (hashes) para auditoria, sem persistir conteúdo PII mais que o necessário.
@@ -329,41 +318,37 @@ No-Go (exemplos)
 
 Decisões registradas
 
-- Protótipo: Langflow para prototipagem rápida de conversas e validação UX.
 - Produção: LangChain + LangGraph para orquestração, testabilidade e modelagem de grafo de diálogo.
+- Provedor LLM para produção: OpenRouter com backend GPT (decisão tomada).
+- Hosting do LangChain runtime: self-hosted dentro do monorepo NX (ex.: apps/bot ou libs/orchestration) (decisão tomada).
 - Canal inicial Webchat; WhatsApp planejado sem prioridade agora.
 - Identificação por client_id; sem pagamento nesta fase.
 
 Decisões pendentes (a serem tomadas antes do Go)
 
-- Escolha final do provedor LLM para produção (OpenAI, Azure, Anthropic, ou mix).
-- Estratégia de hosting do LangChain runtime (self-hosted vs cloud-managed).
 - Políticas exatas de TTL do idempotency_token e retenção de logs/prompt history (retention days).
 - Mecanismo de event broker recomendado (Kafka vs cloud pubsub vs RabbitMQ).
 
 ## Migração e rollout plan
 
 1. Preparar infra e contratos (Fase 0)
-   - Definir esquema de eventos e contrato de API (ex.: /api/bot/\*).
+   - Definir esquema de eventos e contrato de API (ex.: /api/bot/*).
    - Provisionar staging com LangChain + LangGraph; configurar secrets manager e observability.
 
-2. Rodar protótipo em Langflow (Fase 1)
-   - Validar UX, intents e prompts com stakeholders e sample users.
-
-3. Construir integração LangChain (Fase 2)
+2. Construir integração LangChain (Fase 1)
    - Implementar adapters para Domain UseCases (createOrder) com idempotency tests.
    - Criar testes contratuais entre Orchestrator e Domain.
 
-4. Canary / Pilot (Fase 3)
+3. Canary / Pilot (Fase 2)
    - Rota pequena % de tráfego para LangChain em produção; monitorar métricas Go/No-Go.
 
-5. Migração completa
-   - Se métricas Go atingidas, migrar 100% e descomissionar protótipo; caso contrário, rodar rollback para Langflow modalidade read-only até fix.
+4. Migração completa
+   - Se métricas Go atingidas, migrar 100% para o novo runtime; caso contrário, reverter via feature-flag para o caminho estável anterior e iterar.
 
 Rollout/rollback mechanics
 
-- Dual-run (paralelo): durante canary, manter Langflow ativo como fallback. Não permitir dual-write sem coordenação (usar events bridging se necessário).
-- Rollback: feature flag para redirecionar tráfego para Langflow; invalidar tokens temporariamente se necessário.
+- Dual-run (paralelo): durante canary, manter o caminho estável anterior (se existir) como fallback. Não permitir dual-write sem coordenação (usar events bridging se necessário).
+- Rollback: feature flag para redirecionar tráfego para o caminho estável anterior; invalidar tokens temporariamente se necessário.
 
 ## Testes e verificação
 
@@ -379,7 +364,7 @@ Rollout/rollback mechanics
 
 ## Verification checklist (auto-audit antes do Go)
 
-1. Terminologia consistente: check — termos usados nos diagramas e texto: Orchestrator, Langflow, LangChain, LangGraph, Domain.
+1. Terminologia consistente: check — termos usados nos diagramas e texto: Orchestrator, LangChain, LangGraph, Domain.
 2. Diagrama-texto parity: check — todos os componentes no diagrama estão descritos.
 3. Exemplos de payloads validos: check — JSONs seguem os campos documentados (incluem version e idempotency_token).
 4. Migração plan completeness: check — fases, canary, rollback, dual-run e feature flags descritos.
@@ -390,12 +375,11 @@ Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comi
 
 ## Changelog
 
-- 2026-04-17: Documento inicial criado (protótipo Langflow → produção LangChain + LangGraph). Autor: arquitetura.
+- 2026-04-17: Documento inicial criado. Autor: arquitetura.
+ - 2026-05-09: Decisão revisada — fase de prototipagem low-code removida; implementação inicia diretamente com LangChain + LangGraph. Provedor LLM definido: OpenRouter + GPT. Hosting: self-hosted no monorepo NX.
 
 ## TODO / Action items (com prioridade e owner sugerido)
 
-- [P0] Definir provedor LLM para produção — Owner: Lead ML / Arquitetura — Prioridade: alta
-- [P0] Decidir hosting do LangChain runtime (self-hosted vs managed) — Owner: Infra — Prioridade: alta
 - [P1] Implementar idempotency_token pattern no Webchat Adapter e Order UseCase — Owner: Backend — Prioridade: alta
 - [P1] Criar testes de contrato Orchestrator ↔ Domain — Owner: Eng QA — Prioridade: medium
 - [P2] Escolher Event Broker e provisionar staging — Owner: Infra — Prioridade: medium
@@ -403,9 +387,9 @@ Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comi
 ## Anexos (links sugeridos e referências)
 
 - Repositório monorepo: seguir padrões em docs/ (Clean Architecture / DDD).
-- Referências técnicas: LangChain docs, LangGraph docs, Langflow docs.
+- Referências técnicas: LangChain docs, LangGraph docs.
 
 ## Verificações finais
 
-Arquivo criado: docs/bot-ia-architecture.md
+Arquivo atualizado: docs/bot-ia-architecture.md
 Roadmap intacto: docs/roadmap.md NÃO foi alterado por esta operação.

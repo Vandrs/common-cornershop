@@ -39,17 +39,5 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  langflow:
-    image: docker.io/langflowai/langflow:latest
-    ports:
-      - '7860:7860'
-    environment:
-      LANGFLOW_HOST: 0.0.0.0
-      LANGFLOW_PORT: 7860
-    volumes:
-      - langflow_data:/app/langflow
-    restart: unless-stopped
-
 volumes:
   postgres_data:
-  langflow_data:
