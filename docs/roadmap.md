@@ -1,7 +1,7 @@
 # Roadmap — Common Cornershop 📍
 
 Data de criação: 2026-03-25
-Última atualização: 2026-04-19
+Última atualização: 2026-07-12
 
 GitHub Project: https://github.com/users/Vandrs/projects/2
 
@@ -37,6 +37,7 @@ O documento define as tasks, dependências, paralelismos e critérios de conclus
 | Fase 5 — DevOps Final     | Semana 4         | ⏸️ Em espera |
 | Fase 6 — Pós-MVP Qualidade Técnica | — | ✅ Concluída |
 | Fase 7 — Customer & Stock Side-effects | — | ✅ Concluída |
+| Fase 8 — Bot de Vendas IA               | — | 🆕 Backlog |
 
 ---
 
@@ -354,6 +355,41 @@ Referências rápidas: T3.3 (seeds), T4.1 (Fastify bootstrap & DI), T5.1/T5.2 (t
 
 ---
 
+### Fase 8 — Bot de Vendas IA
+
+- Objetivo: implementar o Bot de Vendas conversacional (LangChain + LangGraph) que permite aos clientes listar catálogo, consultar pedidos e criar pedidos via conversa com guardrails (confirmação explícita, idempotência e auditoria mínima). A arquitetura alvo está documentada em `docs/bot-ia-architecture.md`.
+
+- Nota metodológica: diferente das fases 1–7 (organizadas por camada técnica), a Fase 8 está organizada por Epics de produto (feature Epics). Cada Epic (issues #93–#98) contém a user story e critérios de aceite em Gherkin (Given/When/Then) dentro da própria issue. As tasks técnicas verticais (spec, orquestração LangGraph, integração com UseCases, testes e infra) NÃO foram decompostas aqui — essa decomposição acontecerá quando cada Epic sair do estado `🆕 Backlog` e entrar em `In Progress`. Esta escolha é intencional para priorizar validação de produto/UX antes de quebrar em subtasks técnicas.
+
+| ID  | Issue | Título                                                                 | Estimativa | Prioridade | Status       | Link                                                                 |
+| --- | ----- | ---------------------------------------------------------------------: | ---------: | ---------- | ------------ | -------------------------------------------------------------------- |
+| E0  | #93   | Fundação técnica do Bot (runtime, idempotência, auditoria, rate-limit) |       12h  | P0 (high)  | 🆕 Backlog   | [#93](https://github.com/Vandrs/common-cornershop/issues/93)         |
+| E1  | #94   | Listar categorias disponíveis                                          |        6h  | P0 (high)  | 🆕 Backlog   | [#94](https://github.com/Vandrs/common-cornershop/issues/94)         |
+| E2  | #95   | Listar produtos por categoria                                          |        5h  | P0 (high)  | 🆕 Backlog   | [#95](https://github.com/Vandrs/common-cornershop/issues/95)         |
+| E4  | #96   | Criar pedido (fluxo crítico com guardrails)                           |       14h  | P0 (high)  | 🆕 Backlog   | [#96](https://github.com/Vandrs/common-cornershop/issues/96)         |
+| E3  | #97   | Consultar histórico de pedidos do usuário                              |        5h  | P1 (med)   | 🆕 Backlog   | [#97](https://github.com/Vandrs/common-cornershop/issues/97)         |
+| E5  | #98   | Consultar status de um pedido                                          |        4h  | P1 (med)   | 🆕 Backlog   | [#98](https://github.com/Vandrs/common-cornershop/issues/98)         |
+
+- Estimativa preliminar (nível de épico): 46h (somatório dos épicos). Esta estimativa será refinada quando cada Epic for decomposto em subtasks técnicas verticais.
+
+Mermaid — Dependências entre Epics
+
+```mermaid
+flowchart LR
+  E0["E0 — Fundação técnica (#93)"] --> E1["E1 — Listar categorias (#94)"]
+  E1 --> E2["E2 — Listar produtos por categoria (#95)"]
+  E2 --> E4["E4 — Criar pedido (#96)"]
+  E0 --> E3["E3 — Histórico de pedidos (#97)"]
+  E3 --> E5["E5 — Status de pedido (#98)"]
+```
+
+- Ordem de prioridade/entrega confirmada pelo stakeholder: E0 → E1 → E2 → E4 (todos P0) → depois E3 → E5 (P1).
+
+- Critério de conclusão da fase: todas as 6 issues (#93–#98) em estado `Done` e o runtime do Bot respondendo corretamente às intents obrigatórias (listar categorias, listar produtos por categoria, criar pedido com guardrails, listar histórico de pedidos do usuário, consultar status de pedido) com auditoria e idempotência ativos.
+
+- Referências cruzadas: `docs/bot-ia-architecture.md` (arquitetura completa do Bot) e [ADR-0004](docs/adr/0004-bot-audit-events-append-only.md) (decisão sobre tabela append-only de auditoria).
+
+
 8. Caminho Crítico
 
 Sequência (horas acumuladas):
@@ -456,6 +492,12 @@ Melhorias técnicas (do README):
   - [#22](https://github.com/Vandrs/common-cornershop/issues/22)
   - [#23](https://github.com/Vandrs/common-cornershop/issues/23)
   - [#24](https://github.com/Vandrs/common-cornershop/issues/24)
+  - [#93](https://github.com/Vandrs/common-cornershop/issues/93)
+  - [#94](https://github.com/Vandrs/common-cornershop/issues/94)
+  - [#95](https://github.com/Vandrs/common-cornershop/issues/95)
+  - [#96](https://github.com/Vandrs/common-cornershop/issues/96)
+  - [#97](https://github.com/Vandrs/common-cornershop/issues/97)
+  - [#98](https://github.com/Vandrs/common-cornershop/issues/98)
 
 - Documentação existente no repositório:
   - [architecture.md](docs/architecture.md)
@@ -465,6 +507,7 @@ Melhorias técnicas (do README):
   - [database.md](docs/database.md)
   - [project-structure.md](docs/project-structure.md)
   - [testing.md](docs/testing.md)
+  - [bot-ia-architecture.md](docs/bot-ia-architecture.md)
 
 ---
 
