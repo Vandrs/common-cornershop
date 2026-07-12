@@ -116,6 +116,10 @@ Decision record: single global `fastify.setErrorHandler` registered at bootstrap
 
 Decision record: soft-delete de uma Order NÃO aplica cascade soft-delete em OrderItems; responsabilidades de filtragem operacional ficam com repositórios/serviços/read-models.
 
+### [`docs/adr/0004-bot-audit-events-append-only.md`](docs/adr/0004-bot-audit-events-append-only.md)
+
+Decision record: `bot_audit_events` (auditoria do Bot de Vendas IA) é uma tabela append-only, sem soft-delete/`deletedAt`, divergindo da convenção padrão de `BaseEntity`. Exclusão física apenas via rotina de retenção (purge), nunca via soft-delete aplicacional.
+
 ## Real Domain Structure (as implemented)
 
 The actual directory layout in `libs/domain/src/` is **flat by type**, not nested by module:
