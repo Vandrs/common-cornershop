@@ -118,6 +118,8 @@ Exemplo de registro (payload json armazenado em payload):
 ```
 
    - Observability e pipelines de ML feedback devem consumir dados a partir dos logs estruturados e da tabela de auditoria. O uso de um Event Broker (Kafka/RabbitMQ/cloud pubsub) fica adiado — será reavaliado quando existir um consumidor real definido (ex.: analytics, integração com canal WhatsApp). Quando o broker for necessário, sugerimos uma migração com dual-write/bridging e esquema de eventos versionado.
+   - Retenção (decisão registrada): configurável por ambiente via variável de ambiente (ex.: `LOG_RETENTION_DAYS` / `AUDIT_RETENTION_DAYS`) — 7 dias em desenvolvimento/local (uso de estudos) e 30 dias em staging/produção.
+   - `bot_audit_events` é uma tabela append-only (sem soft-delete/`deletedAt`), divergindo da convenção padrão de `BaseEntity`. Decisão formalizada em [ADR-0004](adr/0004-bot-audit-events-append-only.md).
 
 ## Data, eventos e contratos
 
@@ -170,7 +172,7 @@ Versionamento de eventos
 Idempotência e garantias
 
 - Todos comandos de escrita (ex.: createOrder) obrigatoriamente carregam idempotency_token.
-- Server-side: Order UseCase deve atender idempotency_token e retornar o mesmo order_id se token já usado no prazo configurado (ex.: 24h).
+- Server-side: Order UseCase deve atender idempotency_token e retornar o mesmo order_id se token já usado no prazo configurado. TTL decidido: 24 horas.
 
 ## API / Contratos de mensagem (exemplos)
 
@@ -293,7 +295,8 @@ Métrica mínima necessária (Go)
 - Latência: tempo p/ resposta crítica (confirm prompt + create_order end-to-end) < 2s para 95 percentil em staging.
 - Idempotência: 100% de determinismo para requests com mesmo idempotency_token em testes automatizados.
 - Observability: logs estruturados, métricas (intent_accuracy, order_creation_rate, order_creation_failures), traces e alertas configurados.
-- Segurança & Compliance: secrets manager integrado, access controls, PII handling definido (client_id é permitido; dados sensíveis não devem vazar para LLM context).
+- Segurança & Compliance: secrets via variável de ambiente (.env) validada com Zod (mesmo padrão de `apps/api/src/config/database.config.ts`), access controls, PII handling definido (client_id é permitido; dados sensíveis não devem vazar para LLM context).
+- Capacidade/volume: baixo volume (uso pessoal/demonstração de estudos) — não há requisito de otimização para escala nesta fase; a meta de latência (p95 < 2s) é calibrada para esse cenário.
 
 No-Go (exemplos)
 
@@ -310,7 +313,7 @@ Nota: sem uma fase de prototipagem separada com ferramentas low-code, a validaç
    - Mensagem de confirmação deve incluir resumo do pedido (itens, quantidades, total estimado) em pt-BR informal.
 
 2. Idempotência
-   - Exigir idempotency_token gerado pelo cliente (Webchat Adapter). Token TTL configurável (ex.: 24h).
+   - Exigir idempotency_token gerado pelo cliente (Webchat Adapter). Token TTL: 24 horas (decisão registrada).
    - Server-side: reuso do mesmo order_id ao receber token previamente processado; retorno de 200/201 consistente.
 
 3. Verificações de negócio
@@ -350,10 +353,15 @@ Decisões registradas
 - Canal inicial Webchat; WhatsApp planejado sem prioridade agora.
 - Identificação por client_id; sem pagamento nesta fase.
  - Event Broker removido do escopo atual. Auditoria será feita via logs estruturados + tabela de auditoria no PostgreSQL. O uso de um broker será reavaliado somente quando houver consumidores reais definidos (ex.: analytics, integração com WhatsApp).
+ - TTL do idempotency_token: 24 horas.
+ - Retenção de logs estruturados e prompt history: configurável por ambiente — 7 dias em desenvolvimento/local (uso de estudos) e 30 dias em staging/produção.
+ - Secrets hosting: variável de ambiente (.env) validada via Zod, seguindo o mesmo padrão de `apps/api/src/config/database.config.ts` — sem secrets manager dedicado nesta fase.
+ - Volume/capacidade esperado: baixo volume (uso pessoal/demonstração de estudos); metas de latência e rate limit calibradas para esse cenário.
+ - `bot_audit_events` é uma tabela append-only (sem soft-delete/`deletedAt`), divergindo da convenção padrão de `BaseEntity` — decisão formalizada em [ADR-0004](adr/0004-bot-audit-events-append-only.md).
 
 Decisões pendentes (a serem tomadas antes do Go)
 
-- Políticas exatas de TTL do idempotency_token e retenção de logs/prompt history (retention days).
+- Nenhuma pendência bloqueante identificada no momento — todas as decisões previamente listadas nesta seção foram resolvidas (ver Changelog, 2026-07-12).
 
 ## Migração e rollout plan
 
@@ -394,8 +402,8 @@ Rollout/rollback mechanics
 2. Diagrama-texto parity: check — todos os componentes no diagrama estão descritos.
 3. Exemplos de payloads validos: check — JSONs seguem os campos documentados (incluem version e idempotency_token).
 4. Migração plan completeness: check — fases, canary, rollback, dual-run e feature flags descritos.
-5. Segurança & compliance: partial — recomendações listadas; necessidade de decisão pendente sobre retention e secrets hosting.
-6. Performance targets: partial — latência alvo definido (p95 < 2s) mas capacidade estimada depende do volume (requer input do negócio).
+5. Segurança & compliance: check — retenção definida por ambiente (7 dias dev/local, 30 dias staging/produção) e secrets hosting definido (.env validado com Zod).
+6. Performance targets: check — latência alvo (p95 < 2s) e volume esperado (baixo volume / uso de estudos) definidos.
 
 Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comitê de revisão.
 
@@ -404,6 +412,7 @@ Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comi
 - 2026-04-17: Documento inicial criado. Autor: arquitetura.
  - 2026-05-09: Decisão revisada — fase de prototipagem low-code removida; implementação inicia diretamente com LangChain + LangGraph. Provedor LLM definido: OpenRouter + GPT. Hosting: self-hosted no monorepo NX.
  - 2026-05-14: Event Broker removido do escopo atual. Auditoria adotada via logs estruturados + tabela PostgreSQL. Broker será reavaliado se/quando houver consumidor real definido.
+ - 2026-07-12: Decisões pendentes fechadas — TTL do idempotency_token (24h), retenção de logs por ambiente (7 dias dev/local, 30 dias staging/produção), secrets hosting via .env (padrão Zod) e volume esperado (baixo volume / uso de estudos). ADR-0004 criado formalizando `bot_audit_events` como tabela append-only.
 
 ## TODO / Action items (com prioridade e owner sugerido)
 
