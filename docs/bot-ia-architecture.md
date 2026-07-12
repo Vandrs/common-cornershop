@@ -413,6 +413,7 @@ Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comi
  - 2026-05-09: Decisão revisada — fase de prototipagem low-code removida; implementação inicia diretamente com LangChain + LangGraph. Provedor LLM definido: OpenRouter + GPT. Hosting: self-hosted no monorepo NX.
  - 2026-05-14: Event Broker removido do escopo atual. Auditoria adotada via logs estruturados + tabela PostgreSQL. Broker será reavaliado se/quando houver consumidor real definido.
  - 2026-07-12: Decisões pendentes fechadas — TTL do idempotency_token (24h), retenção de logs por ambiente (7 dias dev/local, 30 dias staging/produção), secrets hosting via .env (padrão Zod) e volume esperado (baixo volume / uso de estudos). ADR-0004 criado formalizando `bot_audit_events` como tabela append-only.
+ - 2026-07-12: Decisão revisada: o não-goal anterior de não alterar docs/roadmap.md foi superado — com o início da implementação, uma nova Fase 8 (Bot de Vendas IA) foi adicionada ao roadmap oficial, organizada por Epic de produto (issues #93-#98).
 
 ## TODO / Action items (com prioridade e owner sugerido)
 
