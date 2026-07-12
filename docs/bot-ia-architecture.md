@@ -62,8 +62,7 @@ flowchart LR
   LangChain -->|graph| LangGraph["LangGraph (Decision Graph)"]
   Orchestrator -->|Query/Command| Domain["Domain Services (UseCases)"]
   Domain -->|SQL| Postgres["(PostgreSQL via TypeORM)"]
-  Orchestrator -->|Audit/Events| Broker["Event Broker (Kafka/Rabbit/Cloud)"]
-  Broker -->|consume| Analytics["Analytics / Observability"]
+  %% Broker and Analytics removed from current scope — auditing handled via logs and DB
 ```
 
 Componentes e responsabilidades
@@ -89,9 +88,36 @@ Componentes e responsabilidades
   - Responsável pela lógica de negócio: validação de pedidos, cálculos, regras de estoque.
   - Expõe comandos idempotentes e eventos de domínio.
 
-- Event Broker & Observability
-  - Captura eventos de audit (order_created_attempt, order_created, order_rejected, intent_detected).
-  - Métricas e logs para auditoria e ML feedback loop.
+ - Auditoria & Observability
+   - Logs estruturados via Fastify (JSON) usando o formato de logging já disponível na infraestrutura. Esses logs devem conter campos padronizados: timestamp, level, service, client_id, session_id, request_id, event_type, payload (hash/redacted quando houver PII), idempotency_token.
+   - Tabela de auditoria no PostgreSQL para eventos críticos do bot (ex.: order_creation_attempted, order_created, intent_detected). Exemplo simplificado de esquema:
+
+```sql
+CREATE TABLE bot_audit_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  occurred_at timestamptz NOT NULL DEFAULT now(),
+  event_type text NOT NULL,
+  client_id text,
+  session_id text,
+  idempotency_token text,
+  payload jsonb,
+  processed boolean DEFAULT false
+);
+```
+
+Exemplo de registro (payload json armazenado em payload):
+
+```json
+{
+  "event_type": "order_creation_attempted",
+  "client_id": "client_123",
+  "session_id": "sess_456",
+  "idempotency_token": "uuid-v4-token",
+  "payload": { "items": [{ "product_id": "prod_1", "qty": 2 }] }
+}
+```
+
+   - Observability e pipelines de ML feedback devem consumir dados a partir dos logs estruturados e da tabela de auditoria. O uso de um Event Broker (Kafka/RabbitMQ/cloud pubsub) fica adiado — será reavaliado quando existir um consumidor real definido (ex.: analytics, integração com canal WhatsApp). Quando o broker for necessário, sugerimos uma migração com dual-write/bridging e esquema de eventos versionado.
 
 ## Data, eventos e contratos
 
@@ -323,11 +349,11 @@ Decisões registradas
 - Hosting do LangChain runtime: self-hosted dentro do monorepo NX (ex.: apps/bot ou libs/orchestration) (decisão tomada).
 - Canal inicial Webchat; WhatsApp planejado sem prioridade agora.
 - Identificação por client_id; sem pagamento nesta fase.
+ - Event Broker removido do escopo atual. Auditoria será feita via logs estruturados + tabela de auditoria no PostgreSQL. O uso de um broker será reavaliado somente quando houver consumidores reais definidos (ex.: analytics, integração com WhatsApp).
 
 Decisões pendentes (a serem tomadas antes do Go)
 
 - Políticas exatas de TTL do idempotency_token e retenção de logs/prompt history (retention days).
-- Mecanismo de event broker recomendado (Kafka vs cloud pubsub vs RabbitMQ).
 
 ## Migração e rollout plan
 
@@ -377,12 +403,13 @@ Se qualquer item parcial/pendente bloquear o Go, listar como impedimento no comi
 
 - 2026-04-17: Documento inicial criado. Autor: arquitetura.
  - 2026-05-09: Decisão revisada — fase de prototipagem low-code removida; implementação inicia diretamente com LangChain + LangGraph. Provedor LLM definido: OpenRouter + GPT. Hosting: self-hosted no monorepo NX.
+ - 2026-05-14: Event Broker removido do escopo atual. Auditoria adotada via logs estruturados + tabela PostgreSQL. Broker será reavaliado se/quando houver consumidor real definido.
 
 ## TODO / Action items (com prioridade e owner sugerido)
 
 - [P1] Implementar idempotency_token pattern no Webchat Adapter e Order UseCase — Owner: Backend — Prioridade: alta
 - [P1] Criar testes de contrato Orchestrator ↔ Domain — Owner: Eng QA — Prioridade: medium
-- [P2] Escolher Event Broker e provisionar staging — Owner: Infra — Prioridade: medium
+<!-- P2 removed: Event Broker deferred until consumer exists -->
 
 ## Anexos (links sugeridos e referências)
 
